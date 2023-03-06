@@ -1,6 +1,5 @@
 from abc import ABC
 from dataclasses import dataclass
-from typing import List, Tuple
 
 import numpy as np
 
@@ -18,7 +17,7 @@ class CrossValidationFactory(ABC):
 
 @dataclass
 class VenetianBlinds(CrossValidationFactory):
-    def subset(self) -> Tuple[List[np.ndarray], List[np.ndarray]]:
+    def subset(self) -> tuple[list[np.ndarray], list[np.ndarray]]:
         data = self.data.copy()
 
         training = [
@@ -32,7 +31,7 @@ class VenetianBlinds(CrossValidationFactory):
 
 @dataclass
 class ContiguousBlocks(CrossValidationFactory):
-    def subset(self) -> Tuple[List[np.ndarray], List[np.ndarray]]:
+    def subset(self) -> tuple[list[np.ndarray], list[np.ndarray]]:
         data = self.data.copy()
         idx = np.arange(data.shape[0])
         msk_training = np.array_split(idx, self.n_splits)
@@ -44,7 +43,7 @@ class ContiguousBlocks(CrossValidationFactory):
 
 @dataclass
 class RandomBlocks(CrossValidationFactory):
-    def subset(self) -> List[np.ndarray]:
+    def subset(self) -> list[np.ndarray]:
         data_random = self.data.copy()
         np.random.shuffle(data_random)
         return np.array_split(data_random, self.n_splits)
@@ -52,7 +51,7 @@ class RandomBlocks(CrossValidationFactory):
 
 @dataclass
 class Custom(CrossValidationFactory):
-    def subset(self) -> List[np.ndarray]:
+    def subset(self) -> list[np.ndarray]:
         pass
 
 

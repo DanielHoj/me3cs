@@ -1,5 +1,3 @@
-from typing import Union
-
 import numpy as np
 
 from me3cs.cross_validation.cross_validation_model import CrossValidationModel
@@ -18,7 +16,7 @@ class CrossValidationRegression:
         self,
         x: np.ndarray,
         y: np.ndarray,
-        called_preprocessing: Union[tuple[Called, Called], Called],
+        called_preprocessing: [tuple[Called, Called], Called],
         algorithm: any,
         n_components: int,
         cv_type: str,

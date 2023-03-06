@@ -1,4 +1,3 @@
-from typing import Union
 
 import numpy as np
 
@@ -47,7 +46,7 @@ class PreprocessingOnSplitData:
             self,
             split: CrossValidationSplit,
             x_called: Called,
-            y_called: Union[None, Called] = None,
+            y_called: [None, Called] = None,
     ) -> None:
         self.split = split
         self.x_called = x_called

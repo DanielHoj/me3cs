@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Union
 
 import numpy as np
 
@@ -15,8 +14,8 @@ class CrossValidationSplit:
     _cv_type: str = "venetian_blinds"
     n_splits: int = None
 
-    test: Union[None, tuple[any]] = None
-    training: Union[None, tuple[any]] = None
+    test: [None, tuple[any]] = None
+    training: [None, tuple[any]] = None
 
     @property
     def cv_type(self) -> str:

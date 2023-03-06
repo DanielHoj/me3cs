@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import List, Union
 
 import numpy as np
 
@@ -8,12 +7,12 @@ import numpy as np
 class CrossValidationModel:
     algorithm: any
     n_components: int
-    training: Union[
+    training: [
         tuple[list[np.ndarray, ...]],
         tuple[list[np.ndarray, ...], list[np.ndarray, ...]],
     ]
 
-    cv_models: List[any] = None
+    cv_models: list[any] = None
 
     def __post_init__(self) -> None:
         self.fit()
