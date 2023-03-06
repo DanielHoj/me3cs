@@ -6,7 +6,7 @@ from me3cs.framework.helper_classes.handle_input import validate_data, save_colu
     get_preprocessing_from_dimension
 from me3cs.framework.helper_classes.link import create_links, LinkedBranches
 from me3cs.misc.handle_data import transform_array_1d_to_2d
-from me3cs.missing_data.core import MissingData
+from me3cs.missing_data.missing_data import MissingData
 from me3cs.preprocessing.called import Called
 
 

@@ -1,5 +1,3 @@
-from typing import Union
-
 import numpy as np
 
 from me3cs.model_types.decomposition.decomposition_diagnostics import DecompositionDiagnostics
@@ -14,7 +12,7 @@ class DecompositionResults(DecompositionDiagnostics):
     def __init__(
         self,
         x: np.ndarray,
-        results: Union[SVD, NIPALS, EigenDecomposition],
+        results: [SVD, NIPALS, EigenDecomposition],
     ):
         self.__dict__.update(results.__dict__)
         super().__init__(x, results)

@@ -1,5 +1,3 @@
-from typing import Union
-
 import numpy as np
 import pandas as pd
 
@@ -20,7 +18,7 @@ def save_column_and_index(data: [pd.DataFrame | pd.Series]) -> [dict[list, list]
         return {"index": data.index}
 
 
-def to_pandas(data: Union[np.ndarray, pd.Series, pd.DataFrame]):
+def to_pandas(data: [np.ndarray, pd.Series, pd.DataFrame]):
     if isinstance(data, (pd.DataFrame, pd.Series)):
         return data
     if data.ndim == 1:

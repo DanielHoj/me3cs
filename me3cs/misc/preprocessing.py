@@ -1,5 +1,3 @@
-from typing import Union
-
 import numpy as np
 
 from me3cs.misc.handle_data import handle_zeros_in_scale
@@ -24,7 +22,7 @@ def savgol_coefficients(
 
 
 def preprocessing_scaling(
-    data: np.ndarray, constant: np.ndarray, scale: Union[np.ndarray, float]
+    data: np.ndarray, constant: np.ndarray, scale: [np.ndarray, float]
 ) -> np.ndarray:
 
     dim = data.ndim - 1

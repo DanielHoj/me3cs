@@ -1,5 +1,3 @@
-from typing import Union
-
 import numpy as np
 
 from me3cs.misc.metrics import confidence_limit_matrix, residuals, q_residuals
@@ -14,7 +12,7 @@ class DecompositionDiagnostics:
     def __init__(
         self,
         x: np.ndarray,
-        results: Union[SVD, NIPALS, EigenDecomposition],
+        results: [SVD, NIPALS, EigenDecomposition],
     ):
         self.residuals = residuals(x, results.scores, results.loadings)
         self.q_residuals = q_residuals(self.residuals)
