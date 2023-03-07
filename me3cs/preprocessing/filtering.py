@@ -7,11 +7,42 @@ from me3cs.preprocessing.called import set_called
 
 
 class Filtering(PreprocessingBaseClass):
+    """
+    Class for preprocessing data, with filtering algorithms.
+
+    Methods
+    -------
+    savitzky_golay(width=15, polyorder=2, deriv=1, delta=1)
+        Filter data using the Savitzky-Golay algorithm.
+    baseline(polyorder=1, value_range=None, fit_type='data')
+        Perform baseline correction on data.
+
+    """
     @sort_function_order
     @set_called
     def savitzky_golay(
         self, width: int = 15, polyorder: int = 2, deriv: int = 1, delta: int = 1
     ) -> None:
+        """
+        Filter data using the Savitzky-Golay algorithm.
+
+        Parameters
+        ----------
+        width : int, optional
+            The number of points to use for filtering, by default 15.
+        polyorder : int, optional
+            The order of the polynomial to use for filtering, by default 2.
+        deriv : int, optional
+            The derivative order to use for filtering, by default 1.
+        delta : int, optional
+            The spacing between points to use for filtering, by default 1.
+
+        Raises
+        ------
+        ValueError
+            If width is not an odd number greater or equal to 3 or if deriv is greater than polyorder.
+
+        """
         if width < 3 or width % 2 == 0:
             raise ValueError("width needs to be odd and greater or equal to 3")
 
@@ -30,6 +61,27 @@ class Filtering(PreprocessingBaseClass):
     def baseline(
         self, polyorder: int = 1, value_range: tuple = None, fit_type: str = "data"
     ) -> None:
+        """
+        Perform baseline correction on data.
+
+        Parameters
+        ----------
+        polyorder : int, optional
+            The order of the polynomial to use for fitting, by default 1.
+        value_range : tuple of int, optional
+            The range of values to fit the polynomial to, by default None (uses the entire data range).
+        fit_type : str, optional
+            The type of data to use for fitting. "data" uses the original data, "mean" uses the mean of the data,
+            by default "data".
+
+        Raises
+        ------
+        ValueError
+            If value_range is not a tuple of length 2 or if fit_type is not "data" or "mean".
+        TypeError
+            If value_range is not a list or tuple.
+
+        """
         data = self.data
 
         if value_range is None:
