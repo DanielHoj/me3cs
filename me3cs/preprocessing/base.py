@@ -35,6 +35,19 @@ class ScalingReference:
 
 
 def sort_function_order(func):
+    """
+    A decorator that ensures that the _sort_order() method is called after the decorated method.
+
+    Parameters
+    ----------
+    func : callable
+        The function being decorated.
+
+    Returns
+    -------
+    callable
+        A new function that wraps the original function and calls _sort_order() afterwards.
+    """
     def inner(self, *args, **kwargs):
         func(self, *args, **kwargs)
         self._sort_order()
@@ -81,8 +94,8 @@ class PreprocessingBaseClass(BaseGetter):
 
     Notes
     -----
-    This class is used as a base class for scaling classes. It provides methods for resetting, updating and sorting the
-    called methods. It also provides attributes for keeping track of the state of the object.
+    This class is used as a base class for preprocessing classes. It provides methods for resetting, updating and
+    sorting the called methods. It also provides attributes for keeping track of the state of the object.
     """
     def __init__(self, data: [list[Link, Link, Link] | np.ndarray], linked_branches: [None, LinkedBranches] = None):
         """
