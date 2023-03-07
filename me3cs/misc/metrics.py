@@ -25,7 +25,7 @@ def normalise(data: np.ndarray) -> np.ndarray:
 
 def moore_penrose_inverse(data: np.ndarray) -> np.ndarray:
     """
-    Compute the Moore-Penrose inverse of the input data.
+    Compute the Moore-Penrose inverse of the input data. Full rank is assumed.
 
     Parameters
     ----------
@@ -253,5 +253,33 @@ def explained_variance(loadings: np.ndarray, n: np.ndarray) -> np.ndarray:
 
 
 def leverage(scores: np.ndarray, n: int) -> np.ndarray:
+    """
+    Calculates the leverage values for a given set of scores.
+
+    Parameters
+    ----------
+    scores : np.ndarray
+        The scores matrix of shape (n_samples, n_components).
+    n : int
+        The number of samples in the original dataset.
+
+    Returns
+    -------
+    np.ndarray
+        The leverage values of shape (n_samples,).
+
+    Notes
+    -----
+    The leverage values indicate the contribution of each sample to the principal
+    components. High leverage values indicate that the sample has a large impact
+    on the principal components and may be influential in the analysis.
+
+    References
+    ----------
+    1. Jolliffe, I. T. Principal component analysis. Wiley Online Library, 2011.
+    2. Abdi, H. Partial least square regression, projection on latent structure
+       regression, PLS-Regression. Wiley Interdisciplinary Reviews: Computational
+       Statistics, 2(1), 97-106, 2010.
+    """
     results = np.diag(scores @ scores.T) + (1 / n)
     return results
