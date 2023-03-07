@@ -1,4 +1,5 @@
 def set_called(func):
+
     def inner(self, *args, **kwargs):
         func(self, *args, **kwargs)
         self.called.function.append(func)

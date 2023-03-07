@@ -6,6 +6,27 @@ from me3cs.preprocessing.called import Called
 
 
 class ScalingReference:
+    """
+    Class for computing scaling reference values for data.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        Data for which scaling reference values are to be computed.
+    axis : int, optional
+        Axis along which to compute reference values. Default is 0.
+
+    Attributes
+    ----------
+    mean : np.ndarray
+        Mean of the data along the specified axis.
+    std : np.ndarray
+        Standard deviation of the data along the specified axis.
+    median : np.ndarray
+        Median of the data along the specified axis.
+    sqrt_std : np.ndarray
+        Square root of the standard deviation of the data along the specified axis.
+    """
     def __init__(self, data: np.ndarray, axis=0):
         self.mean: np.ndarray = data.mean(axis=axis)
         self.std: np.ndarray = data.std(axis=axis)
