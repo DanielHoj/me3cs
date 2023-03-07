@@ -7,6 +7,25 @@ from me3cs.preprocessing.called import set_called
 
 
 def scale_once(func):
+    """Decorator function to ensure scaling functions are only called once.
+
+    Parameters:
+    -----------
+    func : function
+        A preprocessing method to be decorated.
+
+    Returns:
+    --------
+    inner : function
+        The decorated function.
+
+    Notes:
+    ------
+    This decorator function checks if the data has already been centered before calling the decorated function. If
+    the data has not been centered, the decorated function is called as usual. If the data has been previously
+    centered, it removes the previous scaling function from the call history and re-applies the function with the new
+    parameters. This is to ensure that scaling functions are only applied once to the data.
+    """
     def inner(self, *args, **kwargs):
         if not self.data_is_centered:
             func(self, *args, **kwargs)
@@ -33,7 +52,33 @@ def scale_once(func):
 
 
 class Scaling(PreprocessingBaseClass):
-    def __scale_pipeline(self, constant: [np.ndarray | float], scale: [np.ndarray | float]) -> None:
+    """
+    A class for scaling input data.
+
+    Methods
+    -------
+    autoscale()
+        Scale the data to have zero mean and unit variance.
+    mean_center()
+        Subtract the mean from the data.
+    pareto()
+        Scale the data using square root of standard deviation.
+    median_center()
+        Subtract the median from the data.
+    """
+
+    def _scale_pipeline(self, constant: [np.ndarray | float], scale: [np.ndarray | float]) -> None:
+        """
+        Perform scaling of data using specified constant and scale. updates the is_centered instance variable to True.
+
+        Parameters
+        ----------
+        constant : numpy.ndarray or float
+            Constant value used for scaling.
+        scale : numpy.ndarray or float
+            Scaling factor.
+
+        """
         data = self.data
 
         new = preprocessing_scaling(data, constant, scale)
@@ -43,37 +88,50 @@ class Scaling(PreprocessingBaseClass):
     @scale_once
     @set_called
     def autoscale(self) -> None:
+        """
+        Scale the data to have zero mean and unit variance.
+        """
         self.set_ref()
 
         constant = -self.reference.mean
         scale = handle_zeros_in_scale(self.reference.std)
-        self.__scale_pipeline(constant, scale)
+        self._scale_pipeline(constant, scale)
 
     @scale_once
     @set_called
     def mean_center(self) -> None:
+        """
+        Subtract the mean from the data.
+        """
+
         self.set_ref()
 
         constant = -self.reference.mean
         scale = 1.0
-        self.__scale_pipeline(constant, scale)
+        self._scale_pipeline(constant, scale)
 
     @scale_once
     @set_called
     def pareto(self) -> None:
+        """
+        Scale the data using square root of standard deviation, and subtracts the mean.
+        """
         self.set_ref()
 
         constant = -self.reference.mean
         scale = handle_zeros_in_scale(self.reference.sqrt_std)
 
-        self.__scale_pipeline(constant, scale)
+        self._scale_pipeline(constant, scale)
 
     @scale_once
     @set_called
     def median_center(self) -> None:
+        """
+        Subtract the median from the data.
+        """
         self.set_ref()
 
         constant = -self.reference.median
         scale = 1.0
 
-        self.__scale_pipeline(constant, scale)
+        self._scale_pipeline(constant, scale)
