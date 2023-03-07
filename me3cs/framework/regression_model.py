@@ -2,9 +2,9 @@ from me3cs.cross_validation.cross_validation import CrossValidation
 from me3cs.framework.base_model import BaseModel
 from me3cs.metrics.regression.metrics import MetricsRegression
 from me3cs.metrics.regression.results import RegressionResults
-from me3cs.model_types.regression.mlr import MLR
-from me3cs.model_types.regression.pcr import PCR
-from me3cs.model_types.regression.pls import PLS
+from me3cs.models.regression.mlr import MLR
+from me3cs.models.regression.pcr import PCR
+from me3cs.models.regression.pls import PLS
 
 
 class RegressionModel(BaseModel):

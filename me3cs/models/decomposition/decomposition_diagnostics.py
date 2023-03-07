@@ -1,7 +1,7 @@
 import numpy as np
 
 from me3cs.misc.metrics import confidence_limit_matrix, residuals, q_residuals
-from me3cs.model_types.decomposition.pca import (
+from me3cs.models.decomposition.pca import (
     NIPALS,
     EigenDecomposition,
     SVD,

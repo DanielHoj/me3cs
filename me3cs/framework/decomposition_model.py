@@ -1,6 +1,6 @@
 from me3cs.framework.base_model import BaseModel
-from me3cs.model_types.decomposition.decomposition_results import DecompositionResults
-from me3cs.model_types.decomposition.pca import PCA
+from me3cs.models.decomposition.decomposition_results import DecompositionResults
+from me3cs.models.decomposition.pca import PCA
 
 
 class DecompositionModel(BaseModel):

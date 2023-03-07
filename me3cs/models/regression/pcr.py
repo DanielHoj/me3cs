@@ -1,7 +1,7 @@
 import numpy as np
 
 from me3cs.misc.metrics import moore_penrose_inverse
-from me3cs.model_types.decomposition.pca import PCA
+from me3cs.models.decomposition.pca import PCA
 
 
 class PCR:

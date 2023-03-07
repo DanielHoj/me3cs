@@ -1,9 +1,9 @@
 import numpy as np
 
 from me3cs.misc.metrics import latent_variable, explained_variance, rmse, mse, bias, leverage
-from me3cs.model_types.regression.mlr import MLR
-from me3cs.model_types.regression.pcr import PCR
-from me3cs.model_types.regression.pls import SIMPLS, NIPALS
+from me3cs.models.regression.mlr import MLR
+from me3cs.models.regression.pcr import PCR
+from me3cs.models.regression.pls import SIMPLS, NIPALS
 
 
 class ResultsPLS:

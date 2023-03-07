@@ -1,7 +1,7 @@
 import numpy as np
 
-from me3cs.model_types.decomposition.decomposition_diagnostics import DecompositionDiagnostics
-from me3cs.model_types.decomposition.pca import (
+from me3cs.models.decomposition.decomposition_diagnostics import DecompositionDiagnostics
+from me3cs.models.decomposition.pca import (
     SVD,
     NIPALS,
     EigenDecomposition,

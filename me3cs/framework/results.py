@@ -1,6 +1,6 @@
 from me3cs.framework.helper_classes.link import LinkedBranches
 from me3cs.misc.metrics import leverage, residuals, q_residuals
-from me3cs.model_types.regression.pls import SIMPLS, NIPALS
+from me3cs.models.regression.pls import SIMPLS, NIPALS
 
 
 class OutlierDetection:
