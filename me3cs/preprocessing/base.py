@@ -43,7 +43,51 @@ def sort_function_order(func):
 
 
 class PreprocessingBaseClass(BaseGetter):
+    """
+    Base class for preprocessing data. Inherits from `BaseGetter`.
+
+    Parameters
+    ----------
+    data : list[Link, Link, Link] or np.ndarray
+        The input data to be preprocessed.
+    linked_branches : None or LinkedBranches, optional
+        Linked branches object. Default is `None`.
+
+    Attributes
+    ----------
+    _raw_data_link : Link
+        A link to the raw data.
+    _missing_data_link : Link
+        A link to the missing data.
+    preprocessing_data_link : Link
+        A link to the preprocessed data.
+    called : Called
+        Object to keep track of the functions that have been called.
+    data_is_centered : bool
+        Flag to indicate if the data has been centered.
+    reference : ScalingReference
+        Object containing information about scaling reference.
+
+    Methods
+    -------
+    set_ref()
+        Set the reference for scaling.
+    update_is_centered(flag: bool) -> None
+        Update `data_is_centered` attribute with the provided flag.
+    reset() -> None
+        Reset the object to its original state.
+    _sort_order() -> None
+        Sort the called methods in order of their execution.
+
+    Notes
+    -----
+    This class is used as a base class for scaling classes. It provides methods for resetting, updating and sorting the
+    called methods. It also provides attributes for keeping track of the state of the object.
+    """
     def __init__(self, data: [list[Link, Link, Link] | np.ndarray], linked_branches: [None, LinkedBranches] = None):
+        """
+        Initialize the `PreprocessingBaseClass` object.
+        """
         raw_data_link, missing_data_link, preprocessing_data_link, data_link = create_links(data)
         if linked_branches is not None:
             self.linked_branches = linked_branches
@@ -58,12 +102,26 @@ class PreprocessingBaseClass(BaseGetter):
         self.reference = ScalingReference(self.data)
 
     def set_ref(self):
+        """
+        Set the reference for scaling.
+        """
         self.reference = ScalingReference(self.data)
 
     def update_is_centered(self, flag: bool) -> None:
+        """
+        Update `data_is_centered` attribute with the provided flag.
+
+        Parameters
+        ----------
+        flag : bool
+            The flag to set for `data_is_centered`.
+        """
         setattr(self, "data_is_centered", flag)
 
     def reset(self) -> None:
+        """
+        Reset the object to its original state.
+        """
         if self.linked_branches is not None:
             self.linked_branches.reset_to_link("_missing_data_link")
             self.data = self._missing_data_link.get()
@@ -73,6 +131,9 @@ class PreprocessingBaseClass(BaseGetter):
         self.called = Called(list(), list(), list())
 
     def _sort_order(self) -> None:
+        """
+        Sort the called methods in order of their execution. Ensures that methods from the 'Scaling' module is called last
+        """
         # Set the order of the called methods so that is always the last method
         sorted_functions_names = [function.__qualname__ for function in self.called.function]
 
