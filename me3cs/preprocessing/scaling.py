@@ -53,7 +53,7 @@ def scale_once(func):
 
 class Scaling(PreprocessingBaseClass):
     """
-    A class for scaling input data.
+    A class containing scaling methods for preprocessing data.
 
     Methods
     -------
