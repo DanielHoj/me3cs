@@ -145,7 +145,8 @@ class PreprocessingBaseClass(BaseGetter):
 
     def _sort_order(self) -> None:
         """
-        Sort the called methods in order of their execution. Ensures that methods from the 'Scaling' module is called last
+        Sort the called methods in order of their execution. Ensures that methods from the 'Scaling'
+        module is called last
         """
         # Set the order of the called methods so that is always the last method
         sorted_functions_names = [function.__qualname__ for function in self.called.function]

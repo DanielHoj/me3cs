@@ -122,51 +122,6 @@ class NIPALS(BasePLS):
         """
         Fit the NIPALS model.
         """
-        # Get data
-        x = self.x.copy()
-        y = transform_array_1d_to_2d(self.y.copy())
-
-        # Assert if PLS1 or PLS2
-        if y.shape[1] == 1:
-            algo_type = "NIPALS1"
-        else:
-            algo_type = "NIPALS2"
-
-        for a in range(self.n_components):
-            # Initialize weights and scores
-            weights = np.random.randn(x.shape[1], 1)
-            scores = np.zeros((x.shape[0], 1))
-            norm_diff = 1
-
-            while norm_diff > 1e-6:
-                # Calculate loadings
-                loadings = x.T @ scores / (scores.T @ scores)
-
-                # Normalize loadings and weights
-                loadings /= np.sqrt(loadings.T @ loadings)
-                weights = x @ loadings / (loadings.T @ loadings)
-
-                # Calculate scores
-                new_scores = x @ weights
-
-                # Check convergence
-                norm_diff = np.linalg.norm(new_scores - scores)
-                scores = new_scores
-
-            # Calculate loadings and scores for y
-            y_loadings = y.T @ scores / (scores.T @ scores)
-            y_scores = y @ y_loadings
-
-            # Store results
-            self.x_weight[:, a] = weights.flatten()
-            self.x_scores[:, a] = scores.flatten()
-            self.x_loadings[:, a] = loadings.flatten()
-            self.y_loadings[:, a] = y_loadings.flatten()
-            self.y_scores[:, a] = y_scores.flatten()
-
-            # Deflate X and Y
-            x -= scores @ weights.T
-            y -= y_scores @ y_loadings.T
 
 
 class SIMPLS(BasePLS):
