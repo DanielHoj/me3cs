@@ -1,3 +1,5 @@
+import numpy as np
+
 from me3cs.framework.helper_classes.link import LinkedBranches
 
 
@@ -15,16 +17,15 @@ class OutlierDetection:
         self._linked_branches = linked_branches
         self._result = result
 
-    def remove_outlier(self, index: [int, list[int], tuple[int]]):
+    def remove_outlier(self, index: [int, list[int], tuple[int], np.ndarray]):
         index_total = self._linked_branches.get_rows()["_preprocessing_data_link"].copy()
         if isinstance(index, int):
             index_total[index] = False
-        elif isinstance(index, (tuple, list)):
+        elif isinstance(index, (tuple, list, np.ndarray)):
             for i in index:
                 index_total[i] = False
         else:
             raise TypeError("Input should be an integer or a tuple")
-        print(sum(index_total))
         self._linked_branches.set_all_rows("_preprocessing_data_link", index_total)
         self._linked_branches.call_preprocessing_in_order()
 
@@ -41,7 +42,6 @@ class OutlierDetection:
         diagnostic_optimal = diagnostic[:, self._result.optimal_number_component]
         diagnostic_optimal = diagnostic_optimal.argsort()
         outliers_to_remove = diagnostic_optimal[-number_of_outliers_to_remove:]
-        print(outliers_to_remove)
         self.remove_outlier(outliers_to_remove)
 
     def remove_outlier_from_q_residuals(self, number_of_outliers_to_remove: int = 1):

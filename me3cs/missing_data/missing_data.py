@@ -120,7 +120,7 @@ class MissingData(BaseGetter):
         self.data = result
         self._missing_data_link.set(result)
 
-    def delete_nan(self, dim: int = 0) -> None:
+    def remove_nan(self, dim: int = 0) -> None:
         """
         Delete missing values in the dataset along a specified dimension.
 
