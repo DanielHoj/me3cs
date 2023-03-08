@@ -1,7 +1,7 @@
 
 <h1> 
 <img src="https://github.com/DanielHoj/me3cs/blob/master/me3cs_logo.png" width="200"  align = "center">
- me3cs - a chemometrical library for python
+ me3cs - a chemometrical package for python
 </h1>
 
 
