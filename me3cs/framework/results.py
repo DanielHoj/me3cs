@@ -26,14 +26,18 @@ class OutlierDetection:
         self._linked_branches.set_all_rows("_preprocessing_data_link", index_total)
         self._linked_branches.call_preprocessing_in_order()
 
-    def remove_outlier_from_q_residuals(self):
+    def remove_outlier_from_q_residuals(self, number_of_outliers_to_remove: int = 1):
+
         if self._result.diagnostics is None:
             raise ReferenceError("diagnostics are not calculated")
         elif not hasattr(self._result.diagnostics, "q_residuals"):
             raise ValueError("q_residuals are not calculated")
+
         q_res = getattr(self._result.diagnostics, "q_residuals")
         q_res_optimal = q_res[:, self._result.optimal_number_component]
-
+        q_res_optimal = q_res_optimal.arg_sort()
+        outliers_to_remove = q_res_optimal[-number_of_outliers_to_remove:]
+        self.remove_outlier(outliers_to_remove)
 
     def remove_outlier_from_hotellings_t2(self):
         pass
