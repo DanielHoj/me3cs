@@ -1,5 +1,6 @@
 from me3cs.cross_validation.cross_validation import CrossValidation
 from me3cs.framework.base_model import BaseModel
+from me3cs.metrics.regression.diagnostics import DiagnosticsPLS
 from me3cs.metrics.regression.metrics import MetricsRegression
 from me3cs.metrics.regression.results import RegressionResults
 from me3cs.models.regression.mlr import MLR
@@ -85,7 +86,9 @@ class RegressionModel(BaseModel):
             x=x_prep, y=y_prep, n_components=self.options.n_components
         )
         calibration_results = reg_results(x_prep, y_prep, model)
+        diagnostics = DiagnosticsPLS(calibration_results)
 
         # Set calibration and cross-validation results
         setattr(self.results, "cross_validation", cv.results)
         setattr(self.results, "calibration", calibration_results)
+        setattr(self.results, "diagnostics", diagnostics)
