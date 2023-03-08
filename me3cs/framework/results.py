@@ -14,6 +14,7 @@ class OutlierDetection:
                 index_total[i] = False
 
         self._linked_branches.set_all_rows("_preprocessing_data_link", index_total)
+        self._linked_branches.call_preprocessing_in_order()
 
 
 class Results:

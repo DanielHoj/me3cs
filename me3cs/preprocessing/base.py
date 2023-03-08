@@ -168,7 +168,10 @@ class PreprocessingBaseClass(BaseGetter):
 
             self.data = self._missing_data_link.get()
 
-            for function, args, kwargs in zip(
-                    self.called.function, self.called.args, self.called.kwargs
-            ):
-                function(self, *args, **kwargs)
+            self._call_in_order()
+
+    def _call_in_order(self):
+        for function, args, kwargs in zip(
+                self.called.function, self.called.args, self.called.kwargs
+        ):
+            function(self, *args, **kwargs)

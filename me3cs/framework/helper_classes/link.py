@@ -126,6 +126,10 @@ class LinkedBranches:
         for branch in self.branches:
             branch._reset_to(reset_to_link)
 
+    def call_preprocessing_in_order(self):
+        for branch in self.branches:
+            branch.preprocessing._call_in_order()
+
 
 def create_links(data: [list[Link, Link, Link, Link] | np.ndarray]) -> tuple[Link, Link, Link, Link]:
     """Creates links for the 'raw', 'missing', 'preprocessing' and 'data' arrays.
