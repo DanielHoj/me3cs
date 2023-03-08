@@ -12,9 +12,9 @@ class Filtering(PreprocessingBaseClass):
 
     Methods
     -------
-    savitzky_golay(width=15, polyorder=2, deriv=1, delta=1)
+    savitzky_golay(width=15, polyorder=2, deriv=1, delta=1):
         Filter data using the Savitzky-Golay algorithm.
-    baseline(polyorder=1, value_range=None, fit_type='data')
+    baseline(polyorder=1, value_range=None, fit_type='data'):
         Perform baseline correction on data.
 
     """

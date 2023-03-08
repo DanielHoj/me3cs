@@ -76,7 +76,7 @@ class LinkedBranches:
             if branch is not changed_branch:
                 branch._row_index.set_index(index_name, index)
 
-    def get_rows(self) -> None:
+    def get_rows(self) -> dict:
         """
         Return a dictionary containing the current row index of the first branch.
         """

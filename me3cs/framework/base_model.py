@@ -1,13 +1,10 @@
 import numpy as np
 import pandas as pd
+from me3cs.framework.results import Results
 
 from me3cs.framework.helper_classes.link import LinkedBranches
 from me3cs.framework.helper_classes.options import Options
 from me3cs.framework.branch import Branch
-
-
-class Results:
-    pass
 
 
 class BaseModel:
@@ -28,5 +25,5 @@ class BaseModel:
             self.y = Branch(y, self._linked_branches)
             self._linked_branches.add_branch(self.y)
 
-        self.results = Results()
+        self.results = Results(self._linked_branches)
         self.options = Options()

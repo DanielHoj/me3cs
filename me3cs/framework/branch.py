@@ -36,11 +36,13 @@ class RowIndex:
                 new_index = [True for _ in range(idx_sum)]
                 for idx_name in idx_names[2:]:
                     setattr(self, idx_name, new_index)
+
             case "_preprocessing_data_link":
                 setattr(self, "_preprocessing_data_link", index)
                 new_index = [True for _ in range(idx_sum)]
                 for idx_name in idx_names[3:]:
                     setattr(self, idx_name, new_index)
+
             case "_data_link":
                 setattr(self, "_data_link", index)
 
@@ -82,7 +84,8 @@ class Branch(BaseGetter):
 
     def _update_data_from_index(self) -> None:
         link_names = ("_raw_data_link", "_missing_data_link", "_preprocessing_data_link", "_data_link")
-
+        self._reset_link()
+        
         for i, link_name in enumerate(link_names):
             index = getattr(self._row_index, link_name)
 
@@ -90,6 +93,13 @@ class Branch(BaseGetter):
                 link = getattr(self, key)
                 data = link.get()
                 link.set(data[index])
+
+    def _reset_link(self):
+        link_names = ("_raw_data_link", "_missing_data_link", "_preprocessing_data_link", "_data_link")
+        data = self._raw_data_link.get()
+        for link_name in link_names:
+            link = getattr(self, link_name)
+            link.set(data)
 
     def _reset_to(self, reset_to_link: str) -> None:
         link_names = ("_raw_data_link", "_missing_data_link", "_preprocessing_data_link", "_data_link")

@@ -6,7 +6,7 @@ from me3cs.misc.handle_data import handle_zeros_in_scale
 
 def normalise(data: np.ndarray) -> np.ndarray:
     """
-    Normalize the input data using L2 norm.
+    Normalise the input data using L2 norm.
 
     Parameters
     ----------
@@ -16,7 +16,7 @@ def normalise(data: np.ndarray) -> np.ndarray:
     Returns
     -------
     np.ndarray
-        The normalized input data.
+        The normalised input data.
 
     """
     norm = np.linalg.norm(data)
