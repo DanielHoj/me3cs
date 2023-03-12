@@ -65,6 +65,7 @@ def index_checker_tuple(existing: tuple, new: tuple) -> list:
     return c
 
 
+
 def index_checker_int(existing: tuple, new: int) -> int:
     return sum(1 for x in existing if x <= new) + new
 
