@@ -27,7 +27,8 @@
 * All algorithms are written with numpy or scipy, avoiding major dependencies.
 
 ## What can it do? <a name="What_can_it_do"></a>
-For a quick illustration of some of *me3cs* capabilities, 
+For a quick illustration of some of *me3cs* capabilities, \
+<img src="https://github.com/DanielHoj/me3cs/blob/master/flowchart_framework.jpg" width="500">
 
 ## Installation <a name="Installation"></a>
 
