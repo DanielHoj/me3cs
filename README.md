@@ -16,9 +16,18 @@
 ## What is it? <a name="What_is_it"></a>
 *me3cs* is a framework for doing chemometrical data analysis in python. The main focus is to provide a pipeline, which can enhance the workflow when dealing with spectroscopical data.
 
+
 ## Why use it? <a name="why_use_it"></a>
+* A high level, centralised workframe, enabling a fast and iterative analysis workflow. 
+* A preprocessing module, including scaling, filtering, normalisation and standarisation methods.
+* A missing values module, with different imputation and interpolation algorithms, and a quickway of removing `NaN` values.
+* Machine learning models for different use-cases; regression, classification or exploratory analysis.
+* Built in cross-validation methods, such as venetian blinds or contiguous blocks.
+* Outlier detection methods, and quick removal of observational or variabel outliers.
+* All algorithms are written with numpy or scipy, avoiding major dependencies.
 
 ## What can it do? <a name="What_can_it_do"></a>
+For a quick illustration of some of *me3cs* capabilities, 
 
 ## Installation <a name="Installation"></a>
 
