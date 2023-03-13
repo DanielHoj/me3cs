@@ -19,7 +19,7 @@ class OutlierDetection:
 
     def remove_outlier(self, index: [int, list[int], tuple[int], np.ndarray]):
         index_total = self._linked_branches.get_rows()["_preprocessing_data_link"].copy()
-        false_index = boolean_to_index(index_total)
+        false_index = count_false(index_total)
         if isinstance(index, int):
             updated_index = index_checker_int(false_index, index)
             index_total[updated_index] = False
@@ -56,6 +56,9 @@ class OutlierDetection:
     def remove_outlier_from_leverage(self, number_of_outliers_to_remove: int = 1):
         self._remove_outlier_from(number_of_outliers_to_remove, "leverage")
 
+    def reset(self):
+        self._linked_branches.reset_to_link("_missing_data_link")
+
 
 def index_checker_tuple(existing: tuple, new: tuple) -> list:
     c = []
@@ -65,10 +68,9 @@ def index_checker_tuple(existing: tuple, new: tuple) -> list:
     return c
 
 
-
 def index_checker_int(existing: tuple, new: int) -> int:
     return sum(1 for x in existing if x <= new) + new
 
 
-def boolean_to_index(boolean: list[bool]) -> tuple:
+def count_false(boolean: list[bool]) -> tuple:
     return tuple(filter(lambda i: not boolean[i], range(len(boolean))))
