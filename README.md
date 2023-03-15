@@ -15,7 +15,7 @@
 6. [License](#License)
 
 ## What is it? <a name="What_is_it"></a>
-*me3cs* is a high level, centralised framework for chemometrical data analysis in python. The main feature is a pipeline, which enhance the workflow of spectroscopical data analysis.
+*me3cs* is a high level, centralised framework for chemometrical data analysis in python. The main feature is a pipeline, which enhances the workflow of spectroscopical data analysis.
 
 
 ## Why use it? <a name="why_use_it"></a>
@@ -79,7 +79,7 @@ A new pls model has now been made with the x data being preprocessed. The model 
 
 If the data contain ``NaN`` values, the ``missing_data`` module can be used to either remove the values, or create new values based on a set of algorithms.
 
-
+The regression coefficients of the calibrated the model can be found under ``mdl.results.calibrations.reg``.
    
 
 ## Installation <a name="Installation"></a>
