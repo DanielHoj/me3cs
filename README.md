@@ -15,7 +15,7 @@
 6. [License](#License)
 
 ## What is it? <a name="What_is_it"></a>
-*me3cs* is a high level, centralised framework for chemometrical data analysis in python. The main feature is a pipeline, which enhance the workflow of spectroscopical data analysis.\
+*me3cs* is a high level, centralised framework for chemometrical data analysis in python. The main feature is a pipeline, which enhance the workflow of spectroscopical data analysis.
 
 
 ## Why use it? <a name="why_use_it"></a>
