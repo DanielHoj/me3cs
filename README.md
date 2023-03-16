@@ -30,7 +30,7 @@
 
 ## What can it do? <a name="What_can_it_do"></a>
 For a quick illustration of the *metric* workframe architecture, look at the following flowchart: \
-<img src="https://github.com/DanielHoj/me3cs/blob/master/flowchart_model.jpg" width="500">
+<img src="https://github.com/DanielHoj/me3cs/blob/master/flowcharts/model_framework.jpg" width="500">
 
 ## Can you give an example?? <a name="Example"></a>
 Yes, you bet!
