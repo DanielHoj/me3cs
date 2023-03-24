@@ -9,7 +9,7 @@
 # Table of Contents
 1. [What is it?](#What_is_it)
 2. [Why use it?](#why_use_it)
-3. [What can it do?](#What_can_it_do)
+3. [How do I use it?](#how_do_i_use_it)
 4. [Can you give an example?](#Example)
 5. [Installation](#Installation)
 6. [License](#License)
@@ -28,9 +28,9 @@
 * All algorithms are written with numpy or scipy, avoiding major dependencies.
 * Supports data as pandas DataFrames and Series, or numpy ndarrays.
 
-## What can it do? <a name="What_can_it_do"></a>
+## How do I use it? <a name="how_do_i_use_it"></a>
 For a quick illustration of the *metric* workframe architecture, look at the following flowchart: \
-<img src="https://github.com/DanielHoj/me3cs/blob/master/flowchart_model.jpg" width="500">
+<img src="https://github.com/DanielHoj/me3cs/blob/master/flowcharts/model_framework.jpg" width="500">
 
 ## Can you give an example?? <a name="Example"></a>
 Yes, you bet!
@@ -39,7 +39,7 @@ The following example uses the GluFrucSuc data set from the University of Copenh
 
 https://food.ku.dk/english/research_at_food/research_fields/foodomics/algorithmsandsoftware/ 
 
-The data is NIR measurements of mixture samples with glucose, fructose and succrose. The example illustrates a quick way to make a pls-r model.
+The data is NIR measurements of mixture samples with glucose, fructose and succrose. The example illustrates a quick way to make a pls-r model. If other objectives are desired, the appropriate models can likewise be created.
 
 The matlab data is loaded as numpy objects, with x as the nir spectra and y as the fructose reference values:
 
@@ -51,7 +51,7 @@ The matlab data is loaded as numpy objects, with x as the nir spectra and y as t
     x = data["data"]
     y = data["fructose_ref"]
 
-An instance of *me3cs* model is created:
+An instance of a *me3cs* model is created:
 
      import me3cs as m3
      mdl = m3.Model(x,y)
@@ -66,15 +66,17 @@ After the PLS model is created, the results can be found in ``mdl.results``. The
 
     mdl.results.outlier_detection.remove_outlier_from_hotellings_t2()
 
-removes the observation with the highest $hotelling\ T\^2$ value at the optimal number of component. A new model can be calculated from the subset of data, with the ``pls()`` method again. Observations can also be removed based on residual and leverage values. The number of observations can be reset with the ``mdl.results.outlier_detection.reset()``method.
+removes the observation with the highest $hotelling\ T\^2$ value at the optimal number of component. Observations can also be removed based on $Q-residuals$ and leverage values. A new model can be calculated from the subset of data, once again calling the 
+
+    mdl.pls()
+    
+The number of observations can be reset with the ``mdl.results.outlier_detection.reset()``method.
 
 The x and y data can be preprocessed by using the ``preprocessing`` module. For instance
 
     mdl.x.preprocessing.msc()
     
-performs *multiplicative scatter correction* on the x data. The preprocessing is sorted so that *scaling* methods are called lastly. A list of the called preprocessing methods can be found under ``mdl.x.preprocessing.called.function``.
-
-To reset the called preprocessing methods ``mdl.x.preprocessing.reset()`` can be called.
+performs *multiplicative scatter correction* on the x data. The preprocessing is sorted so that *scaling* methods are called lastly. A list of the called preprocessing methods can be found under ``mdl.x.preprocessing.called.function``. To reset the called preprocessing methods ``mdl.x.preprocessing.reset()`` can be called.
 
      mdl.pls()
      
@@ -82,7 +84,7 @@ A new pls model has now been made with the x data being preprocessed. The model 
 
 If the data contain ``NaN`` values, the ``missing_data`` module can be used to either remove the values, or create new values based on a set of algorithms.
 
-The regression coefficients of the calibrated the model can be found under ``mdl.results.calibrations.reg``.
+The regression coefficients of the calibrated the model can be found under ``mdl.results.calibrations.reg``, fromwhich new predictions can be made.
    
 
 ## Installation <a name="Installation"></a>
