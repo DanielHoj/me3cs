@@ -1,4 +1,6 @@
 import numpy as np
+import scipy.interpolate as interpolate
+from scipy.signal import argrelextrema
 
 from me3cs.framework.helper_classes.link import LinkedBranches
 
@@ -74,3 +76,96 @@ def index_checker_int(existing: tuple, new: int) -> int:
 
 def count_false(boolean: list[bool]) -> tuple:
     return tuple(filter(lambda i: not boolean[i], range(len(boolean))))
+
+
+class FindKnee:
+    def __init__(self, rmse: np.ndarray):
+        self.y = rmse
+        self.x = np.arange(rmse.shape[0])
+
+        # Step 1: fit a smooth line
+        uspline = interpolate.interp1d(self.x, self.y)
+        self.Ds_y = uspline(self.x)
+
+        self._y_normalised = normalise(self.y)
+        self._x_normalised = normalise(self.x)
+
+        self._y_normalised = self._y_normalised.max() - self._y_normalised
+
+        self._y_difference = self._y_normalised - self._x_normalised
+        self._x_difference = self._x_normalised.copy()
+
+        # local maxima
+        self.maxima_indices = argrelextrema(self._y_difference, np.greater_equal)[0]
+        self.x_difference_maxima = self._x_difference[self.maxima_indices]
+        self.y_difference_maxima = self._y_difference[self.maxima_indices]
+
+        # local minima
+        self.minima_indices = argrelextrema(self._y_difference, np.less_equal)[0]
+        self.x_difference_minima = self._x_difference[self.minima_indices]
+        self.y_difference_minima = self._y_difference[self.minima_indices]
+
+        self.Tmx = self.y_difference_maxima - (
+            np.abs(np.diff(self._x_normalised).mean())
+        )
+
+        self.knee = self.find_knee()
+
+    def find_knee(self) -> int:
+        # If no
+        if not self.maxima_indices:
+            return 0
+
+        # placeholder for which threshold region i is located in.
+        maxima_threshold_index = 0
+        minima_threshold_index = 0
+        threshold = 0
+        threshold_index = 0
+
+        # traverse the difference curve
+        for i, x in enumerate(self._x_difference):
+            # skip points on the curve before the first local maxima
+            if i < self.maxima_indices[0]:
+                continue
+
+            j = i + 1
+
+            # reached the end of the curve
+            if x == 1.0:
+                return 0
+
+            # if we're at a local max, increment the maxima threshold index and continue
+            if (self.maxima_indices == i).any():
+                threshold = self.Tmx[maxima_threshold_index]
+                threshold_index = i
+                maxima_threshold_index += 1
+
+            # values in difference curve are at or after a local minimum
+            if (self.minima_indices == i).any():
+                threshold = 0.0
+                minima_threshold_index += 1
+
+            if self._y_difference[j] < threshold:
+                knee = self.x[threshold_index]
+                norm_knee = self._x_normalised[threshold_index]
+
+                return knee
+
+
+def choose_optimal_component(rmsec: np.ndarray, rmsecv: np.ndarray):
+    # Find knee of rmsec
+    rmsec_knee = FindKnee(rmsec).knee
+
+    # Calculate threshold
+    threshold = np.mean(np.abs(np.diff(rmsecv)))
+
+    rmsecv_diff = np.abs(np.diff(rmsecv))
+    rmsecv_diff = rmsecv_diff[rmsec_knee:]
+
+    for i, c in enumerate(rmsecv_diff):
+        if not c > threshold:
+            return i + rmsec_knee
+
+
+def normalise(x):
+    return (x - np.min(x)) / (np.max(x) - np.min(x))

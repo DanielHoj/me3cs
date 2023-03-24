@@ -1,5 +1,6 @@
 from me3cs.cross_validation.cross_validation import CrossValidation
 from me3cs.framework.base_model import BaseModel
+from me3cs.framework.results import choose_optimal_component
 from me3cs.metrics.regression.diagnostics import DiagnosticsPLS
 from me3cs.metrics.regression.metrics import MetricsRegression
 from me3cs.metrics.regression.results import RegressionResults
@@ -87,8 +88,11 @@ class RegressionModel(BaseModel):
         )
         calibration_results = reg_results(x_prep, y_prep, model)
         diagnostics = DiagnosticsPLS(calibration_results)
+        n_components = choose_optimal_component(calibration_results.rmse, cv.results.rmse)
 
         # Set calibration and cross-validation results
         setattr(self.results, "cross_validation", cv.results)
         setattr(self.results, "calibration", calibration_results)
         setattr(self.results, "diagnostics", diagnostics)
+        setattr(self.results, "optimal_number_component", n_components)
+
