@@ -151,7 +151,6 @@ class FindKnee:
 
                 return knee
 
-
 def choose_optimal_component(rmsec: np.ndarray, rmsecv: np.ndarray):
     # Find knee of rmsec
     rmsec_knee = FindKnee(rmsec).knee
