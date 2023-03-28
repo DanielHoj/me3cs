@@ -276,3 +276,9 @@ def leverage(scores: np.ndarray, n: int) -> np.ndarray:
     """
     results = np.diag(scores @ scores.T) + (1 / n)
     return results
+
+
+def hotellings_t2(scores):
+    results = [(np.diag(scores[:, :i] @ scores[:, :i].T) + (1 / scores.shape[1])).reshape(-1, 1) for i in
+               range(1, scores.shape[1]+1)]
+    return np.concatenate(results, axis=1)
