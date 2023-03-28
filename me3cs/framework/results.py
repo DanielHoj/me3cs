@@ -10,8 +10,8 @@ class Results:
         self.calibration = None
         self.cross_validation = None
         self.diagnostics = None
-        self.outlier_detection = OutlierDetection(self, linked_branches)
         self.optimal_number_component = None
+        self.outlier_detection = OutlierDetection(self, linked_branches)
 
 
 class OutlierDetection:
@@ -40,7 +40,7 @@ class OutlierDetection:
         elif not hasattr(self._result.diagnostics, diagnostic_name):
             raise ValueError(f"{diagnostic_name} is not calculated")
 
-        if not isinstance(self._result.optimal_number_component, int):
+        if not isinstance(self._result.optimal_number_component, (int, np.int64)):
             raise ValueError("optimal number of components must be chosen")
 
         diagnostic = getattr(self._result.diagnostics, diagnostic_name)
@@ -147,9 +147,9 @@ class FindKnee:
 
             if self._y_difference[j] < threshold:
                 knee = self.x[threshold_index]
-                norm_knee = self._x_normalised[threshold_index]
 
                 return knee
+
 
 def choose_optimal_component(rmsec: np.ndarray, rmsecv: np.ndarray):
     # Find knee of rmsec
