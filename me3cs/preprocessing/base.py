@@ -27,6 +27,7 @@ class ScalingReference:
     sqrt_std : np.ndarray
         Square root of the standard deviation of the data along the specified axis.
     """
+
     def __init__(self, data: np.ndarray, axis=0):
         self.mean: np.ndarray = data.mean(axis=axis)
         self.std: np.ndarray = data.std(axis=axis)
@@ -48,6 +49,7 @@ def sort_function_order(func):
     callable
         A new function that wraps the original function and calls _sort_order() afterwards.
     """
+
     def inner(self, *args, **kwargs):
         func(self, *args, **kwargs)
         self._sort_order()
@@ -97,7 +99,9 @@ class PreprocessingBaseClass(BaseGetter):
     This class is used as a base class for preprocessing classes. It provides methods for resetting, updating and
     sorting the called methods. It also provides attributes for keeping track of the state of the object.
     """
-    def __init__(self, data: [list[Link, Link, Link] | np.ndarray], linked_branches: [None, LinkedBranches] = None):
+
+    def __init__(self, data: [list[Link, Link, Link, Link] | np.ndarray],
+                 linked_branches: [None, LinkedBranches] = None):
         """
         Initialize the `PreprocessingBaseClass` object.
         """
@@ -159,7 +163,6 @@ class PreprocessingBaseClass(BaseGetter):
 
         # If the order of the functions are changed, the lists are updated and the methods are called again
         if sorted_functions != self.called.function:
-
             index = [sorted_functions.index(self.called.function[i]) for i in range(len(self.called.function))]
 
             self.called.function = sorted_functions
