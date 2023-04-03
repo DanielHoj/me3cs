@@ -49,8 +49,8 @@ class RegressionModel(BaseModel):
 
     def __regresion_pileline__(self, algorithm: any, reg_results: any):
         # Get raw data
-        x = self.x._missing_data_link.get()
-        y = self.y._missing_data_link.get()
+        x = self.x.get_raw_data()
+        y = self.y.get_raw_data()
 
         # mean center if not mean centered
         if not self.x.preprocessing.data_is_centered:

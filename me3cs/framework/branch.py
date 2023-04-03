@@ -5,6 +5,7 @@ from me3cs.framework.helper_classes.base_getter import BaseGetter
 from me3cs.framework.helper_classes.handle_input import validate_data, save_column_and_index, to_pandas, \
     get_preprocessing_from_dimension
 from me3cs.framework.helper_classes.link import create_links, LinkedBranches
+from me3cs.framework.results import count_false
 from me3cs.misc.handle_data import transform_array_1d_to_2d
 from me3cs.missing_data.missing_data import MissingData
 from me3cs.preprocessing.called import Called
@@ -54,6 +55,19 @@ class RowIndex:
         index = getattr(self, index_name)
         return index
 
+    def get_total_index(self) -> list[bool]:
+        rows = self.__dict__.values()
+        row_idx = list()
+
+        for row in rows:
+            row_idx.append(count_false(row))
+        added_row_idx = add_all_idx(row_idx)
+        bool_idx = self._raw_data_link.copy()
+        for i in added_row_idx:
+            bool_idx[i] = False
+
+        return bool_idx
+
 
 class Branch(BaseGetter):
     def __init__(self, data: [np.ndarray, pd.Series, pd.DataFrame], linked_branches: LinkedBranches) -> None:
@@ -85,7 +99,7 @@ class Branch(BaseGetter):
     def _update_data_from_index(self) -> None:
         link_names = ("_raw_data_link", "_missing_data_link", "_preprocessing_data_link", "_data_link")
         self._reset_link()
-        
+
         for i, link_name in enumerate(link_names):
             index = getattr(self._row_index, link_name)
 
@@ -100,6 +114,11 @@ class Branch(BaseGetter):
         for link_name in link_names:
             link = getattr(self, link_name)
             link.set(data)
+
+    def get_raw_data(self):
+        idx = self._row_index.get_total_index()
+        data = self._raw_data_link.get()
+        return data[idx]
 
     def _reset_to(self, reset_to_link: str) -> None:
         link_names = ("_raw_data_link", "_missing_data_link", "_preprocessing_data_link", "_data_link")
@@ -143,3 +162,20 @@ class Branch(BaseGetter):
                 for name in link_names[3:]:
                     link = getattr(self, name)
                     link.set(data)
+
+def add_idx(existing: tuple, new: tuple) -> list:
+    c = []
+    for element in new:
+        count = sum(1 for x in existing if x <= element)
+        c.append(count + element)
+    c.extend(existing)
+    c.sort()
+    return c
+
+
+def add_all_idx(index_rows: list[tuple]) -> list:
+    total_idx = []
+    for i, idx in enumerate(index_rows):
+        new_idx = add_idx(tuple(total_idx), idx)
+        total_idx = new_idx
+    return total_idx
