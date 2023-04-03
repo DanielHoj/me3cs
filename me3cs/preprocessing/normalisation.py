@@ -48,8 +48,12 @@ class Normalisation(PreprocessingBaseClass):
         data = self.data
 
         if reference is None:
-            # Calculate mean
-            ref = data.mean(axis=0)
+            # Set reference data
+            self.set_ref()
+
+            # Get reference data
+            ref = self.reference.mean
+
         else:
             ref = reference
 
