@@ -2,6 +2,7 @@ import numpy as np
 
 from me3cs.framework.helper_classes.base_getter import BaseGetter
 from me3cs.framework.helper_classes.link import Link, create_links, LinkedBranches
+from me3cs.framework.row_index import RowIndex
 from me3cs.preprocessing.called import Called
 
 
@@ -101,13 +102,15 @@ class PreprocessingBaseClass(BaseGetter):
     """
 
     def __init__(self, data: [list[Link, Link, Link, Link] | np.ndarray],
-                 linked_branches: [None, LinkedBranches] = None):
+                 linked_branches: [None, LinkedBranches] = None, row_idx: [None, RowIndex] = None):
         """
         Initialize the `PreprocessingBaseClass` object.
         """
         raw_data_link, missing_data_link, preprocessing_data_link, data_link = create_links(data)
         if linked_branches is not None:
             self.linked_branches = linked_branches
+        if row_idx is not None:
+            self._row_idx = row_idx
 
         super().__init__(data_link)
         self._raw_data_link = raw_data_link
@@ -169,7 +172,9 @@ class PreprocessingBaseClass(BaseGetter):
             self.called.args = [new for _, new in sorted(zip(index, self.called.args))]
             self.called.kwargs = [new for _, new in sorted(zip(index, self.called.kwargs))]
 
-            self.data = self._missing_data_link.get()
+            data = self._raw_data_link.get()
+            idx = self._row_idx.get_total_index()
+            self.data = data[idx]
 
             self._call_in_order()
 
