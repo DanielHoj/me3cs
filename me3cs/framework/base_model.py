@@ -27,3 +27,6 @@ class BaseModel:
 
         self.results = Results(self._linked_branches)
         self.options = Options()
+
+    def reset(self):
+        self._linked_branches.reset_to_link("_raw_data_link")
