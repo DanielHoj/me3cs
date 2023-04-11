@@ -280,5 +280,64 @@ def leverage(scores: np.ndarray, n: int) -> np.ndarray:
 
 def hotellings_t2(scores):
     results = [(np.diag(scores[:, :i] @ scores[:, :i].T) + (1 / scores.shape[1])).reshape(-1, 1) for i in
-               range(1, scores.shape[1]+1)]
+               range(1, scores.shape[1] + 1)]
     return np.concatenate(results, axis=1)
+
+
+def calculate_vips(scores, weights, loadings):
+    """
+    Calculates VIP scores for variables in X based on scores T and weights W from a PLS model.
+
+    Parameters
+    ----------
+    scores: numpy.ndarray
+        An n x m array of PLS scores.
+    weights: numpy.ndarray
+        An m x p array of PLS weights.
+    loadings: numpy.ndarray
+        An m x p array of PLS loadings.
+
+    Returns
+    -------
+    vip_scores (numpy.ndarray): A 1D array of VIP scores for each variable in X.
+    """
+    p, h = weights.shape
+    vips = np.zeros((p,))
+    s = np.diag(np.matmul(np.matmul(np.matmul(scores.T, scores), loadings.T), loadings))
+    total_s = np.sum(s)
+
+    for i in range(p):
+        weight = np.array([(weights[i, j] / np.linalg.norm(weights[:, j])) ** 2 for j in range(h)])
+        vips[i] = np.sqrt(p*(np.matmul(s.T, weight))/total_s)
+
+    return vips
+
+
+def calculate_vips2(x_scores, x_weights, y_loadings):
+    """
+    Calculates VIP scores for variables in X based on scores T and weights W from a PLS model.
+
+    Parameters
+    ----------
+    x_scores: numpy.ndarray
+        An n x m array of x scores from a PLS model.
+    x_weights: numpy.ndarray
+        An m x p array of x weights from a PLS model.
+    y_loadings: numpy.ndarray
+        An m x p array of y loadings from a PLS model.
+
+    Returns
+    -------
+    vip_scores (numpy.ndarray): A 2D array of VIP scores for each variable in X, for each component.
+    """
+
+    k, a = x_weights.shape
+    s = np.sum(x_scores ** 2, axis=0) * np.sum(y_loadings ** 2, axis=0)
+    total_s = np.cumsum(s)
+
+    weights_norm = x_weights / np.linalg.norm(x_weights, axis=0)
+    weights_squared = weights_norm**2
+
+    vip = np.sqrt(k/a * np.cumsum(s * weights_squared, axis=1) / total_s)
+
+    return vip
