@@ -50,5 +50,7 @@ class Called:
 
     def __repr__(self):
         called_functions = [x.__name__ for x in self.function]
+        if len(called_functions) == 0:
+            called_functions = ["None"]
         called_functions_as_str = ", ".join(called_functions)
         return f"Called functions: {called_functions_as_str}"
