@@ -47,3 +47,8 @@ class Called:
         self.function: list = function
         self.args: list = args
         self.kwargs: list = kwargs
+
+    def __repr__(self):
+        called_functions = [x.__name__ for x in self.function]
+        called_functions_as_str = ", ".join(called_functions)
+        return f"Called functions: {called_functions_as_str}"
