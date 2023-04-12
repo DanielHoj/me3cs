@@ -46,12 +46,20 @@ class Log:
             self._y_branch = branches[0]
         self._results = results
         self.model_details = LogObject(branches, results)
-        self.models = []
+        self.entries = []
 
-    def make_log(self):
+    def make_entry(self):
         new_log = deepcopy(self.model_details)
 
-        self.models.append(new_log)
+        self.entries.append(new_log)
 
     def get_summary(self):
         pass
+
+    def __repr__(self):
+        logs = self.entries.__repr__().replace('[', '').replace(']', '').replace(', ', '\n')
+        if len(logs) == 0:
+            logs = "None"
+
+        return f"me3cs Models created:\n" \
+               f"{logs}"
