@@ -14,9 +14,12 @@ class Results:
         self.outlier_detection = OutlierDetection(self, linked_branches)
 
     def __repr__(self):
-        cal = ", ".join(self.calibration.__dict__.keys())
-        cross_validation = ", ".join(self.cross_validation.__dict__.keys())
-        diagnostics = ", ".join(self.diagnostics.__dict__.keys())
+        if self.diagnostics is not None:
+            cal = ", ".join(self.calibration.__dict__.keys())
+            cross_validation = ", ".join(self.cross_validation.__dict__.keys())
+            diagnostics = ", ".join(self.diagnostics.__dict__.keys())
+        else:
+            cal, cross_validation, diagnostics = "None", "None", "None"
         return f"me3cs results calculated:\n" \
                f"Calibration: {cal}\n" \
                f"Cross_validation: {cross_validation}\n" \

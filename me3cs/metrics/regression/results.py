@@ -6,7 +6,14 @@ from me3cs.models.regression.pcr import PCR
 from me3cs.models.regression.pls import SIMPLS, NIPALS
 
 
-class ResultsPLS:
+class ResultsRegression:
+    def __repr__(self):
+        cal = ", ".join(self.__dict__.keys())
+        return f"Calibration metrics calculated:\n" \
+               f"{cal}"
+
+
+class ResultsPLS(ResultsRegression):
     def __init__(
             self,
             x: np.ndarray,
