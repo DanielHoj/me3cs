@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+
+from me3cs.framework.log import Log
 from me3cs.framework.results import Results
 
 from me3cs.framework.helper_classes.link import LinkedBranches
@@ -27,6 +29,7 @@ class BaseModel:
 
         self.results = Results(self._linked_branches)
         self.options = Options()
+        self.log = Log(self._linked_branches.branches, self.results)
 
     def reset(self):
         self._linked_branches.reset_to_link("_raw_data_link")
