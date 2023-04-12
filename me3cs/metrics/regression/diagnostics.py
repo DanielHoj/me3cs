@@ -11,3 +11,8 @@ class DiagnosticsPLS:
         self.q_residuals = q_residuals(res)
         self.leverage = leverage(results.x_scores, results.x.shape[0])
         self.hotelling_t2 = hotellings_t2(results.x_scores)
+
+    def __repr__(self):
+        diagnostics = ", ".join(self.__dict__.keys())
+        return f"Diagnostics calculated:\n" \
+               f"{diagnostics}"
