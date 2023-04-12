@@ -13,6 +13,16 @@ class Results:
         self.optimal_number_component = None
         self.outlier_detection = OutlierDetection(self, linked_branches)
 
+    def __repr__(self):
+        cal = ", ".join(self.calibration.__dict__.keys())
+        cross_validation = ", ".join(self.cross_validation.__dict__.keys())
+        diagnostics = ", ".join(self.diagnostics.__dict__.keys())
+        return f"me3cs results calculated:\n" \
+               f"Calibration: {cal}\n" \
+               f"Cross_validation: {cross_validation}\n" \
+               f"Diagnostrics: {diagnostics}\n" \
+               f"Optimal components: {self.optimal_number_component}"
+
 
 class OutlierDetection:
     def __init__(self, result: Results, linked_branches: LinkedBranches):
