@@ -33,3 +33,11 @@ class BaseModel:
 
     def reset(self):
         self._linked_branches.reset_to_link("_raw_data_link")
+
+    def __repr__(self):
+        logs = self.log.entries.__repr__().replace('[', '').replace(']', '').replace(', ', '\n')
+        if len(logs) == 0:
+            logs = "None"
+
+        return f"me3cs Models created:\n" \
+               f"{logs}"
