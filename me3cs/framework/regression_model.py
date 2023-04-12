@@ -68,7 +68,7 @@ class RegressionModel(BaseModel):
 
         cv_regression = CrossValidation["regression"]
 
-        cv = cv_regression(  # Create models with the cross-validation module
+        cv = cv_regression(  # Create entries with the cross-validation module
             x=x,
             y=y,
             called_preprocessing=called_preprocessing,
@@ -91,11 +91,11 @@ class RegressionModel(BaseModel):
         n_components = choose_optimal_component(calibration_results.rmse, cv.results.rmse)
 
         self.log.model_details.last_model_called = "PLS"
-        self.log.make_log()
-        
+
         # Set calibration and cross-validation results
         setattr(self.results, "cross_validation", cv.results)
         setattr(self.results, "calibration", calibration_results)
         setattr(self.results, "diagnostics", diagnostics)
         setattr(self.results, "optimal_number_component", n_components)
 
+        self.log.make_entry()
