@@ -183,3 +183,7 @@ class PreprocessingBaseClass(BaseGetter):
                 self.called.function, self.called.args, self.called.kwargs
         ):
             function(self, *args, **kwargs)
+
+    def __repr__(self):
+        return f"Preprocessing module\n" \
+               f"{self.called}"
