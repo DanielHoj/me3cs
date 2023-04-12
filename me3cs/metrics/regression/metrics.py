@@ -10,3 +10,8 @@ class MetricsRegression:
         self.mse = mse(y, self.y_hat)
         self.bias = bias(y, self.y_hat)
         self.variance = self.y_hat.std()
+
+    def __repr__(self):
+        cv_met = ", ".join(self.__dict__.keys())
+        return f"Cross-validation metrics calculated:\n" \
+               f"{cv_met}"
