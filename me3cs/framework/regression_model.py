@@ -90,6 +90,9 @@ class RegressionModel(BaseModel):
         diagnostics = DiagnosticsPLS(calibration_results)
         n_components = choose_optimal_component(calibration_results.rmse, cv.results.rmse)
 
+        self.log.model_details.last_model_called = "PLS"
+        self.log.make_log()
+        
         # Set calibration and cross-validation results
         setattr(self.results, "cross_validation", cv.results)
         setattr(self.results, "calibration", calibration_results)
