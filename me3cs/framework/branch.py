@@ -104,3 +104,6 @@ class Branch(BaseGetter):
                 for name in link_names[3:]:
                     link = getattr(self, name)
                     link.set(data)
+
+    def __repr__(self):
+        return f"{repr(self.data)}"
