@@ -1,5 +1,6 @@
 import numpy as np
 
+from me3cs.framework.helper_classes.options import dict_to_string_with_newline
 from me3cs.misc.metrics import latent_variable, explained_variance, rmse, mse, bias, leverage
 from me3cs.models.regression.mlr import MLR
 from me3cs.models.regression.pcr import PCR
@@ -8,9 +9,8 @@ from me3cs.models.regression.pls import SIMPLS, NIPALS
 
 class ResultsRegression:
     def __repr__(self):
-        cal = ", ".join(self.__dict__.keys())
         return f"Calibration metrics calculated:\n" \
-               f"{cal}"
+               f"{dict_to_string_with_newline(self.__dict__)}"
 
 
 class ResultsPLS(ResultsRegression):
