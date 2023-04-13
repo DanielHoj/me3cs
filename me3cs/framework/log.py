@@ -47,8 +47,6 @@ class Log:
         self._x_branch = branches[0]
         if len(branches) > 0:
             self._y_branch = branches[0]
-        self._results = results
-        self.options = options
         self.model_details = LogObject(branches, results, options)
         self.entries = []
 
