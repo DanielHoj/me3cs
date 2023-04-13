@@ -32,7 +32,8 @@ def set_called(func):
 
 class Called:
     """
-    A class to represent the preprocessing methods that have been called.
+    A class to represent the methods that have been called in a module, either the
+    preprocessing or missing data module.
 
     Attributes
     ----------
