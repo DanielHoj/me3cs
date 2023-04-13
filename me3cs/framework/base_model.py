@@ -35,4 +35,4 @@ class BaseModel:
         self._linked_branches.reset_to_link("_raw_data_link")
 
     def __repr__(self):
-        return f"me3cs Model - {self.log}"
+        return f"me3cs Model"
