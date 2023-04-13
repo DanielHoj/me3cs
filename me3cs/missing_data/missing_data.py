@@ -187,7 +187,11 @@ class MissingData(BaseGetter):
         resets the data to the `raw data`.
         """
         self._linked_branches.reset_to_link("_raw_data_link")
+        self.called = Called(list(), list(), list())
 
     def __repr__(self):
         return f"Missing data module\n" \
-               f"{self.called}"
+               f"Nr of missing values: {np.sum(np.isnan(self.data))}\n" \
+               f"Nr of missing values removed: " \
+               f"{np.sum(np.isnan(self._raw_data_link.get())) - np.sum(np.isnan(self.data))}\n" \
+               f"{self.called}\n"
