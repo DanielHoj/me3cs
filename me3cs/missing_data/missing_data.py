@@ -6,6 +6,7 @@ from me3cs.framework.helper_classes.base_getter import BaseGetter
 from me3cs.framework.helper_classes.link import Link, create_links, LinkedBranches
 from me3cs.missing_data.imputation import imputation_algorithms
 from me3cs.missing_data.interpolation import interpolation_algorithms
+from me3cs.preprocessing.called import Called, set_called
 
 
 def check_nan(data: np.ndarray) -> None:
@@ -78,7 +79,9 @@ class MissingData(BaseGetter):
         self._preprocessing_data_link = preprocessing_data_link
         check_nan(self.data)
         self._linked_branches = linked_branches
+        self.called = Called(list(), list(), list())
 
+    @set_called
     def interpolation(self, algorithm: str = "mean") -> None:
         """
         Interpolate missing values using a specified algorithm.
@@ -99,6 +102,7 @@ class MissingData(BaseGetter):
         self.data = result
         self._missing_data_link.set(result)
 
+    @set_called
     def imputation(self, algorithm: str = "emsvd") -> None:
         """
         imputate missing values using a specified algorithm.
@@ -120,6 +124,7 @@ class MissingData(BaseGetter):
         self.data = result
         self._missing_data_link.set(result)
 
+    @set_called
     def remove_nan(self, dim: int = 0) -> None:
         """
         Delete missing values in the dataset along a specified dimension.
@@ -182,3 +187,7 @@ class MissingData(BaseGetter):
         resets the data to the `raw data`.
         """
         self._linked_branches.reset_to_link("_raw_data_link")
+
+    def __repr__(self):
+        return f"Missing data module\n" \
+               f"{self.called}"
