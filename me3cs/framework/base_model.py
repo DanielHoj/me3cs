@@ -29,15 +29,10 @@ class BaseModel:
 
         self.results = Results(self._linked_branches)
         self.options = Options()
-        self.log = Log(self._linked_branches.branches, self.results)
+        self.log = Log(self._linked_branches.branches, self.results, self.options)
 
     def reset(self):
         self._linked_branches.reset_to_link("_raw_data_link")
 
     def __repr__(self):
-        logs = self.log.entries.__repr__().replace('[', '').replace(']', '').replace(', ', '\n')
-        if len(logs) == 0:
-            logs = "None"
-
-        return f"me3cs Models created:\n" \
-               f"{logs}"
+        return f"me3cs Model - {self.log}"
