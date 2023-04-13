@@ -1,3 +1,4 @@
+from me3cs.framework.helper_classes.options import dict_to_string_with_newline
 from me3cs.misc.metrics import residuals, q_residuals, leverage, hotellings_t2
 from me3cs.models.regression.pls import SIMPLS, NIPALS
 
@@ -13,6 +14,5 @@ class DiagnosticsPLS:
         self.hotelling_t2 = hotellings_t2(results.x_scores)
 
     def __repr__(self):
-        diagnostics = ", ".join(self.__dict__.keys())
         return f"Diagnostics calculated:\n" \
-               f"{diagnostics}"
+               f"{dict_to_string_with_newline(self.__dict__)}"
