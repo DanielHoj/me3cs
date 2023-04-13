@@ -11,6 +11,9 @@ class Options:
         self.mean_center = mean_center
         self.percentage_left_out = percentage_left_out
 
+    def __repr__(self):
+        return dict_to_string_with_newline(self.__dict__)
+
     @property
     def cross_validation(self):
         return self._cross_validation
@@ -19,7 +22,7 @@ class Options:
     def cross_validation(self, cv: str):
         cv_options = ["venetian_blinds", "contiguous_blocks", "random_blocks"]
         if cv not in cv_options:
-            raise ValueError(f"Please input {cv_options}. {cv} was input")
+            raise ValueError(f"Please input {', '.join(cv_options)}. {cv} was input")
         self._cross_validation = cv
 
     @property
@@ -47,3 +50,10 @@ class Options:
                 f"Please input a a float between 0 and 1. {left_out} was input."
             )
         self._percentage_left_out = left_out
+
+
+def dict_to_string_with_newline(d) -> str:
+    string_dict = ""
+    for key, value in d.items():
+        string_dict += str(key).lstrip("_") + ": " + str(value) + "\n"
+    return string_dict
