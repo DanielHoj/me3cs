@@ -11,6 +11,7 @@ from me3cs.misc.handle_data import transform_array_1d_to_2d
 from me3cs.missing_data.missing_data import MissingData
 from me3cs.preprocessing.called import Called
 
+
 class Branch(BaseGetter):
     def __init__(self, data: [np.ndarray, pd.Series, pd.DataFrame], linked_branches: LinkedBranches) -> None:
         validate_data(data)
@@ -106,4 +107,14 @@ class Branch(BaseGetter):
                     link.set(data)
 
     def __repr__(self):
-        return f"{repr(self.data)}"
+        return f"Data shape: {self.data.shape}\n" \
+               f""
+
+    def __getitem__(self, key):
+        return Branch(self.data[key], self._linked_branches)
+
+    def __array__(self):
+        return self.data
+
+    def __len__(self):
+        return len(self.data)
