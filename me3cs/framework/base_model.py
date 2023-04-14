@@ -31,7 +31,7 @@ class BaseModel:
 
         self.results = Results(self._linked_branches)
         self.options = Options()
-        self.log = Log(self, self._linked_branches.branches, self.results, self.options)
+        self.log = Log(self, self.results, self.options)
         self.outlier_detection = OutlierDetection(self)
 
     def reset(self):
