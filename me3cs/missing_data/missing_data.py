@@ -189,6 +189,12 @@ class MissingData(BaseGetter):
         self._linked_branches.reset_to_link("_raw_data_link")
         self.called = Called(list(), list(), list())
 
+    def call_in_order(self):
+        for function, args, kwargs in zip(
+                self.called.function, self.called.args, self.called.kwargs
+        ):
+            function(self, *args, **kwargs)
+
     def __repr__(self):
         return f"Missing data module\n" \
                f"Nr of missing values: {np.sum(np.isnan(self.data))}\n" \
