@@ -2,7 +2,7 @@ import numpy as np
 
 from me3cs.cross_validation.cross_validation import CrossValidation
 from me3cs.framework.base_model import BaseModel
-from me3cs.framework.results import choose_optimal_component
+from me3cs.framework.outlier_detection import choose_optimal_component
 from me3cs.metrics.regression.diagnostics import DiagnosticsPLS
 from me3cs.metrics.regression.metrics import MetricsRegression
 from me3cs.metrics.regression.results import RegressionResults
@@ -95,7 +95,7 @@ class RegressionModel(BaseModel):
             x=x_prep, y=y_prep, n_components=self.options.n_components
         )
         calibration_results = reg_results(x_prep, y_prep, model)
-        diagnostics = DiagnosticsPLS(calibration_results)
+        diagnostics = DiagnosticsPLS(x_prep, calibration_results)
         n_components = choose_optimal_component(calibration_results.rmse, cv.results.rmse)
 
         self.log.log_object.last_model_called = "PLS"
