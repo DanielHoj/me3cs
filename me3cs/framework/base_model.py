@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 
 from me3cs.framework.log import Log
+from me3cs.framework.outlier_detection import OutlierDetection
 from me3cs.framework.results import Results
 
 from me3cs.framework.helper_classes.link import LinkedBranches
@@ -31,9 +32,10 @@ class BaseModel:
         self.results = Results(self._linked_branches)
         self.options = Options()
         self.log = Log(self, self._linked_branches.branches, self.results, self.options)
+        self.outlier_detection = OutlierDetection(self)
 
     def reset(self):
-        self.results.outlier_detection.reset()
+        self.outlier_detection.reset()
         self.log.log_object.last_model_called = None
         [branch.preprocessing.reset() for branch in self._linked_branches.branches]
         [branch.missing_data.reset() for branch in self._linked_branches.branches]
