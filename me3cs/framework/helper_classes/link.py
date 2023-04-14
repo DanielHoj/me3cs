@@ -128,7 +128,7 @@ class LinkedBranches:
 
     def call_preprocessing_in_order(self):
         for branch in self.branches:
-            branch.preprocessing._call_in_order()
+            branch.preprocessing.call_in_order()
 
 
 def create_links(data: [list[Link, Link, Link, Link] | np.ndarray]) -> tuple[Link, Link, Link, Link]:
