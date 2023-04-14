@@ -8,7 +8,6 @@ from me3cs.framework.helper_classes.link import create_links, LinkedBranches
 from me3cs.framework.row_index import RowIndex
 from me3cs.misc.handle_data import transform_array_1d_to_2d
 from me3cs.missing_data.missing_data import MissingData
-from me3cs.preprocessing.called import Called
 
 
 class Branch(BaseGetter):
@@ -70,7 +69,7 @@ class Branch(BaseGetter):
 
         match reset_to_link:
             case "_raw_data_link":
-                self.preprocessing.called = Called(list(), list(), list())
+                self.preprocessing.called.reset()
                 self.preprocessing.update_is_centered(False)
                 row_idx = self._row_index.get_index(reset_to_link)
                 self._row_index.set_index(reset_to_link, row_idx)
@@ -80,7 +79,7 @@ class Branch(BaseGetter):
                     link.set(data)
 
             case "_missing_data_link":
-                self.preprocessing.called = Called(list(), list(), list())
+                self.preprocessing.called.reset()
                 self.preprocessing.update_is_centered(False)
                 row_idx = self._row_index.get_index(reset_to_link)
                 self._row_index.set_index(reset_to_link, row_idx)

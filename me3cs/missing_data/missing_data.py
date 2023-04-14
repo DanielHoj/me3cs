@@ -187,7 +187,7 @@ class MissingData(BaseGetter):
         resets the data to the `raw data`.
         """
         self._linked_branches.reset_to_link("_raw_data_link")
-        self.called = Called(list(), list(), list())
+        self.called.reset()
 
     def call_in_order(self):
         for function, args, kwargs in zip(

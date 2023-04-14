@@ -148,7 +148,7 @@ class PreprocessingBaseClass(BaseGetter):
         else:
             self.data = self._missing_data_link.get()
         self.update_is_centered(False)
-        self.called = Called(list(), list(), list())
+        self.called.reset()
 
     def _sort_order(self) -> None:
         """
