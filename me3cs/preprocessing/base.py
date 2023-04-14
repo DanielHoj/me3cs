@@ -176,9 +176,9 @@ class PreprocessingBaseClass(BaseGetter):
             idx = self._row_idx.get_total_index()
             self.data = data[idx]
 
-            self._call_in_order()
+            self.call_in_order()
 
-    def _call_in_order(self):
+    def call_in_order(self):
         for function, args, kwargs in zip(
                 self.called.function, self.called.args, self.called.kwargs
         ):
