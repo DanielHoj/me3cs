@@ -5,24 +5,34 @@ from me3cs.framework.helper_classes.options import Options
 
 from me3cs.framework.branch import Branch
 from me3cs.framework.results import Results
+from me3cs.preprocessing.called import Called
 
 
 class LogObject:
-    def __init__(self, branches: [list[Branch, Branch], list[Branch]], results: Results, options: Options) -> None:
-        self._branches = branches
-        if len(branches) > 0:
-            x, y = branches
-            self.x_prep = x.preprocessing.called
-            self.y_prep = y.preprocessing.called
-            self.x_missing = x.missing_data.called
-            self.y_missing = y.missing_data.called
+    def __init__(self,
+                 prep: tuple[Called, ...],
+                 missing_data: tuple[Called, ...],
+                 results: Results,
+                 options: Options,
+                 rows: list[bool, ...],
+                 ) -> None:
+
+        if len(prep) > 0:
+            self.x_prep = prep[0]
+            self.y_prep = prep[1]
+            self.x_missing = missing_data[0]
+            self.y_missing = missing_data[1]
         else:
-            x = branches
-            self.x_prep = x.preprocessing.called
-            self.x_missing = x.missing_data.called
+            self.x_prep = prep[0]
+            self.x_missing = missing_data[0]
+
         self.results = results
         self.options = options
-        self.rows = x._row_index.get_total_index()
+
+        self._prep = prep
+        self._missing_data = missing_data
+
+        self.rows = rows
         self.created_at = datetime.datetime.now().replace(microsecond=0)
         self.last_model_called = None
 
@@ -30,13 +40,15 @@ class LogObject:
         return f"model type: {self.last_model_called} created {self.created_at}"
 
     def __copy__(self):
-        new_obj = LogObject(self._branches, self.results, self.options)
+        new_obj = LogObject(self._prep, self._missing_data, self.results, self.options, self.rows)
         new_obj.created_at = datetime.datetime.now().replace(microsecond=0)
         new_obj.last_model_called = self.last_model_called
         return new_obj
 
     def __deepcopy__(self, memo):
-        new_obj = LogObject(deepcopy(self._branches, memo), deepcopy(self.results, memo), deepcopy(self.options, memo))
+        new_obj = LogObject(deepcopy(self._prep, memo), deepcopy(self._missing_data, memo),
+                            deepcopy(self.results, memo), deepcopy(self.options, memo),
+                            deepcopy(self.rows, memo))
         new_obj.created_at = datetime.datetime.now().replace(microsecond=0)
         new_obj.last_model_called = self.last_model_called
         return new_obj
@@ -44,14 +56,16 @@ class LogObject:
 
 class Log:
     def __init__(self, branches: [list[Branch, Branch], list[Branch]], results: Results, options: Options):
-        self._x_branch = branches[0]
-        if len(branches) > 0:
-            self._y_branch = branches[0]
-        self.model_details = LogObject(branches, results, options)
+
+        prep = tuple(prep.preprocessing.called for prep in branches)
+        missing_data = tuple(missing.missing_data.called for missing in branches)
+
+        rows = branches[0]._row_index
+        self.log_object = LogObject(prep, missing_data, results, options, rows)
         self.entries = []
 
     def make_entry(self):
-        new_log = deepcopy(self.model_details)
+        new_log = deepcopy(self.log_object)
 
         self.entries.append(new_log)
 
