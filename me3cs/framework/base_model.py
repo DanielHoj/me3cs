@@ -18,7 +18,7 @@ class BaseModel:
         self._linked_branches = LinkedBranches([])
         self.x = Branch(x, self._linked_branches)
         self._linked_branches.add_branch(self.x)
-
+        self._single_branch = True
         if y is not None:
             if x.shape[0] != y.shape[0]:
                 raise ValueError(f"x and y need to have the same number of rows. "
@@ -26,13 +26,17 @@ class BaseModel:
                                  f"\ny rows {y.shape[0]}")
             self.y = Branch(y, self._linked_branches)
             self._linked_branches.add_branch(self.y)
+            self._single_branch = False
 
         self.results = Results(self._linked_branches)
         self.options = Options()
-        self.log = Log(self._linked_branches.branches, self.results, self.options)
+        self.log = Log(self, self._linked_branches.branches, self.results, self.options)
 
     def reset(self):
-        self._linked_branches.reset_to_link("_raw_data_link")
+        self.results.outlier_detection.reset()
+        self.log.log_object.last_model_called = None
+        [branch.preprocessing.reset() for branch in self._linked_branches.branches]
+        [branch.missing_data.reset() for branch in self._linked_branches.branches]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"me3cs Model"
