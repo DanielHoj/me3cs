@@ -108,6 +108,7 @@ class Branch(BaseGetter):
 
     def __repr__(self):
         return f"Data shape: {self.data.shape}\n" \
+               f"Preprocessing - {self.preprocessing.called}\n" \
                f""
 
     def __getitem__(self, key):
