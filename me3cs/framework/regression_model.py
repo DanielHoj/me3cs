@@ -1,3 +1,5 @@
+import numpy as np
+
 from me3cs.cross_validation.cross_validation import CrossValidation
 from me3cs.framework.base_model import BaseModel
 from me3cs.framework.results import choose_optimal_component
@@ -52,6 +54,12 @@ class RegressionModel(BaseModel):
         x = self.x.get_raw_data()
         y = self.y.get_raw_data()
 
+        if np.isnan(x).any():
+            raise ValueError("x contains missing values. Use the missing_data module to adress the problem")
+
+        if np.isnan(y).any():
+            raise ValueError("y contains missing values. Use the missing_data module to adress the problem")
+
         # mean center if not mean centered
         if not self.x.preprocessing.data_is_centered:
             if self.options.mean_center:
@@ -90,7 +98,7 @@ class RegressionModel(BaseModel):
         diagnostics = DiagnosticsPLS(calibration_results)
         n_components = choose_optimal_component(calibration_results.rmse, cv.results.rmse)
 
-        self.log.model_details.last_model_called = "PLS"
+        self.log.log_object.last_model_called = "PLS"
 
         # Set calibration and cross-validation results
         setattr(self.results, "cross_validation", cv.results)
