@@ -2,8 +2,10 @@ import datetime
 from copy import deepcopy
 import typing
 
+import pandas as pd
+
 from me3cs.framework.helper_classes.options import Options
-from me3cs.framework.branch import Branch
+from me3cs.framework.outlier_detection import count_false
 from me3cs.framework.results import Results
 from me3cs.preprocessing.called import Called
 
@@ -64,11 +66,12 @@ class LogObject:
 
 
 class Log:
-    def __init__(self, model: "BaseModel", branches: [list[Branch, Branch], list[Branch]], results: Results, options: Options):
+    def __init__(self, model: "BaseModel", results: Results,
+                 options: Options):
 
-        prep = tuple(prep.preprocessing.called for prep in branches)
-        missing_data = tuple(missing.missing_data.called for missing in branches)
-        rows = branches[0]._row_index
+        prep = tuple(prep.preprocessing.called for prep in model._linked_branches.branches)
+        missing_data = tuple(missing.missing_data.called for missing in model._linked_branches.branches)
+        rows = model._linked_branches.branches[0]._row_index
 
         self._model = model
         self.log_object = LogObject(prep, missing_data, results, options, rows)
@@ -129,6 +132,63 @@ class Log:
         return f"log entries:\n" \
                f"{logs}"
 
-    def get_summary(self) -> dict:
+    def get_summary(self) -> pd.DataFrame:
+        summary = Summary(self.entries)
+        return summary.return_dataframe()
 
-        pass
+
+class Summary:
+    def __init__(self, entries: list[LogObject, ...]):
+        date_time = self.extract_value(entries, "created_at")
+        self.index = [index for index in range(len(entries))]
+        self.comment = self.extract_value(entries, "comment")
+        self.date = [d.date() for d in date_time]
+        self.time = [d.time() for d in date_time]
+        self.cv_type = self.extract_value(entries, "_cross_validation", "options")
+        self.cv_left_out = self.extract_value(entries, "_percentage_left_out", "options")
+        self.opt_comp = self.extract_value(entries, "optimal_number_component", "results")
+
+        x_prep = self.extract_value(entries, "function", "x_prep")
+        called_functions = [[prep.__name__.replace("_", " ") for prep in x] for x in x_prep]
+        self.x_prep = [", ".join(called_function) for called_function in called_functions]
+
+        y_prep = self.extract_value(entries, "function", "y_prep")
+        called_functions = [[prep.__name__.replace("_", " ") for prep in y] for y in y_prep]
+        self.y_prep = [", ".join(called_function) for called_function in called_functions]
+
+        rows = self.extract_value(entries, "rows")
+        obs_removed = [len(count_false(row.rows)) for row in rows]
+        self.obs_removed = obs_removed
+
+        self.rmsec = self.extract_value_from_results(entries, "rmse", "calibration")
+        self.rmsecv = self.extract_value_from_results(entries, "rmse", "cross_validation")
+        self.msec = self.extract_value_from_results(entries, "mse", "calibration")
+        self.msecv = self.extract_value_from_results(entries, "mse", "cross_validation")
+        self.biascv = self.extract_value_from_results(entries, "bias", "cross_validation")
+
+        self.return_dataframe()
+
+    @staticmethod
+    def extract_value(entries: list[LogObject, ...], key: str, inner: [None, str] = None):
+        if not inner:
+            result = [entry.__dict__.get(key) for entry in entries]
+        else:
+            result = [entry.__dict__.get(inner).__dict__.get(key) for entry in entries]
+        return result
+
+    def extract_value_from_results(self, entries: list[LogObject, ...], key: str, inner: [None, str] = None):
+
+        result = [entry.results.__dict__.get(inner).__dict__.get(key)
+                  if entry.results.__dict__.get(inner)
+                     is not None else "Not calculated"
+                  for entry in entries]
+        results = [res[self.opt_comp[i]]
+                   if self.opt_comp[i] is not None else "Not calculated"
+                   for i, res in enumerate(result)
+                   ]
+        return results
+
+    def return_dataframe(self) -> pd.DataFrame:
+        df = pd.DataFrame().from_dict(self.__dict__)
+        df.columns = df.columns.str.replace("_", " ")
+        return df
