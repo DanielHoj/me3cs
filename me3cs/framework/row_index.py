@@ -1,6 +1,6 @@
 import numpy as np
 
-from me3cs.framework.results import count_false
+from me3cs.framework.outlier_detection import count_false
 
 
 class RowIndex:
