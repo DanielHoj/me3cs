@@ -11,6 +11,14 @@ class RowIndex:
         self._preprocessing_data_link = idx_bool.copy()
         self._data_link = idx_bool.copy()
 
+    @property
+    def rows(self):
+        return self.get_total_index()
+
+    @rows.getter
+    def rows(self):
+        return self.get_total_index()
+
     def set_index(self, index_name: str, index: list[bool]) -> None:
         idx_names = ("_raw_data_link", "_missing_data_link", "_preprocessing_data_link", "_data_link")
         idx_sum = sum(index)
