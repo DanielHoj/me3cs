@@ -69,9 +69,10 @@ class Log:
     def __init__(self, model: "BaseModel", results: Results,
                  options: Options):
 
-        prep = tuple(prep.preprocessing.called for prep in model._linked_branches.branches)
-        missing_data = tuple(missing.missing_data.called for missing in model._linked_branches.branches)
-        rows = model._linked_branches.branches[0]._row_index
+        branch = model._linked_branches.branches
+        prep = tuple(prep.preprocessing.called for prep in branch)
+        missing_data = tuple(missing.missing_data.called for missing in branch)
+        rows = branch[0]._row_index
 
         self._model = model
         self.log_object = LogObject(prep, missing_data, results, options, rows)
@@ -87,7 +88,7 @@ class Log:
         if not isinstance(entry_number, int):
             raise TypeError("Please input an int as entry_number")
 
-        model_entry = self.entries[entry_number]
+        model_entry = deepcopy(self.entries[entry_number])
 
         self._model.results = model_entry.results
         self._model.options = model_entry.options
@@ -123,6 +124,7 @@ class Log:
             self._model.x.preprocessing.call_in_order()
 
         self._model.x._update_data_from_index()
+        self.log_object = model_entry
 
     def __repr__(self):
         logs = self.entries.__repr__().replace('[', '').replace(']', '').replace(', ', '\n')
@@ -144,7 +146,9 @@ class Summary:
         self.comment = self.extract_value(entries, "comment")
         self.date = [d.date() for d in date_time]
         self.time = [d.time() for d in date_time]
-        self.cv_type = self.extract_value(entries, "_cross_validation", "options")
+        cv_type = self.extract_value(entries, "_cross_validation", "options")
+        called_functions = [cv.replace("_", " ") for cv in cv_type]
+        self.cv_type = called_functions
         self.cv_left_out = self.extract_value(entries, "_percentage_left_out", "options")
         self.opt_comp = self.extract_value(entries, "optimal_number_component", "results")
 
@@ -178,14 +182,17 @@ class Summary:
 
     def extract_value_from_results(self, entries: list[LogObject, ...], key: str, inner: [None, str] = None):
 
-        result = [entry.results.__dict__.get(inner).__dict__.get(key)
-                  if entry.results.__dict__.get(inner)
-                     is not None else "Not calculated"
-                  for entry in entries]
-        results = [res[self.opt_comp[i]]
-                   if self.opt_comp[i] is not None else "Not calculated"
-                   for i, res in enumerate(result)
-                   ]
+        result = [
+            entry.results.__dict__.get(inner).__dict__.get(key)
+            if entry.results.__dict__.get(inner) is not None else "Not calculated"
+            for entry in entries
+        ]
+
+        results = [
+            res[self.opt_comp[i]]
+            if self.opt_comp[i] is not None else "Not calculated"
+            for i, res in enumerate(result)
+        ]
         return results
 
     def return_dataframe(self) -> pd.DataFrame:
