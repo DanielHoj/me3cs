@@ -12,15 +12,6 @@ class Link:
     ----------
     data : {np.ndarray, None}
         The data to be stored.
-
-    Examples
-    --------
-    >>> link = Link(5)
-    >>> link.get()
-    5
-    >>> link.set(10)
-    >>> link.get()
-    10
     """
     data: [np.ndarray, None]
 
