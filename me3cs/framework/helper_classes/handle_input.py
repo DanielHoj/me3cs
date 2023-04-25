@@ -1,8 +1,6 @@
 import numpy as np
 import pandas as pd
 
-from me3cs.preprocessing.preprocessing import Preprocessing
-
 
 def validate_data(data: [np.ndarray | pd.Series | pd.DataFrame]) -> None:
     if not isinstance(data, (np.ndarray, pd.Series, pd.DataFrame)):
@@ -26,13 +24,6 @@ def to_pandas(data: [np.ndarray, pd.Series, pd.DataFrame]):
     else:
         column = [f"Variable {i + 1}" for i in range(data.shape[1])]
         return pd.DataFrame(data, columns=column)
-
-
-def get_preprocessing_from_dimension(data: np.ndarray) -> any:
-    if data.ndim == 1 or data.shape[1] == 1:
-        return Preprocessing["1D"]
-    else:
-        return Preprocessing["2D"]
 
 
 def bit_type(data: [np.ndarray | pd.Series | pd.DataFrame], bit: str = "float32") -> np.ndarray:
