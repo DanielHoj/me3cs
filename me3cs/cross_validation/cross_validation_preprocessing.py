@@ -90,7 +90,7 @@ class PreprocessingOnSplitData:
 
 
 def apply_preprocessing_on_split_data(
-        training_set: list[np.ndarray], test_set: list[np.ndarray], called: Called
+        training_set: list[np.ndarray, ...], test_set: list[np.ndarray, ...], called: Called
 ) -> tuple[list[np.ndarray], list[np.ndarray]]:
     preprocessed_training_set = []
     preprocessed_test_set = []
