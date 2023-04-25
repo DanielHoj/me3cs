@@ -29,7 +29,7 @@ def to_pandas(data: [np.ndarray, pd.Series, pd.DataFrame]):
 
 
 def get_preprocessing_from_dimension(data: np.ndarray) -> any:
-    if data.ndim == 1:
+    if data.ndim == 1 or data.shape[1] == 1:
         return Preprocessing["1D"]
     else:
         return Preprocessing["2D"]
