@@ -41,7 +41,7 @@ def scale_once(func):
                 self.called.kwargs.pop(index)
 
                 func(self, *args, **kwargs)
-                self.data = self._missing_data_link.get()
+                self.data = self.data_class.get_raw_data()
 
                 for function, args, kwargs in zip(
                         self.called.function, self.called.args, self.called.kwargs
@@ -91,10 +91,9 @@ class Scaling(PreprocessingBaseClass):
         """
         Scale the data to have zero mean and unit variance.
         """
-        self.set_ref()
 
-        constant = -self.reference.mean
-        scale = handle_zeros_in_scale(self.reference.std)
+        constant = -self.data.mean(axis=0)
+        scale = handle_zeros_in_scale(self.data.std(axis=0))
         self._scale_pipeline(constant, scale)
 
     @scale_once
@@ -104,9 +103,7 @@ class Scaling(PreprocessingBaseClass):
         Subtract the mean from the data.
         """
 
-        self.set_ref()
-
-        constant = -self.reference.mean
+        constant = -self.data.mean(axis=0)
         scale = 1.0
         self._scale_pipeline(constant, scale)
 
@@ -116,10 +113,9 @@ class Scaling(PreprocessingBaseClass):
         """
         Scale the data using square root of standard deviation, and subtracts the mean.
         """
-        self.set_ref()
 
-        constant = -self.reference.mean
-        scale = handle_zeros_in_scale(self.reference.sqrt_std)
+        constant = -self.data.mean(axis=0)
+        scale = handle_zeros_in_scale(np.sqrt(self.data.std(axis=0)))
 
         self._scale_pipeline(constant, scale)
 
@@ -129,9 +125,8 @@ class Scaling(PreprocessingBaseClass):
         """
         Subtract the median from the data.
         """
-        self.set_ref()
 
-        constant = -self.reference.median
+        constant = -np.median(self.data, axis=0)
         scale = 1.0
 
         self._scale_pipeline(constant, scale)

@@ -3,7 +3,6 @@ import numpy as np
 
 from me3cs.cross_validation.cross_validation_split import CrossValidationSplit
 from me3cs.misc.handle_data import transform_array_1d_to_2d
-from me3cs.preprocessing.base import ScalingReference
 from me3cs.preprocessing.called import Called
 from me3cs.preprocessing.filtering import Filtering
 from me3cs.preprocessing.normalisation import Normalisation
@@ -29,7 +28,6 @@ class PreSplitPreprocessing(Normalisation, Filtering, Standardisation):
 class PostSplitPreprocessing(Scaling):
     def __init__(self, data: np.ndarray, reference: np.ndarray, called: Called) -> None:
         super(PostSplitPreprocessing, self).__init__(transform_array_1d_to_2d(data))
-        self.reference = ScalingReference(transform_array_1d_to_2d(reference))
         self.called = called
 
     def call_in_order(self) -> None:
