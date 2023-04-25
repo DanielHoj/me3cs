@@ -27,19 +27,18 @@ class Index:
         return self._merge_index()
 
     @total.getter
-    def index(self):
+    def total(self):
         return self._merge_index()
 
     @property
     def length_of_rows(self):
-        return sum(self.index)
+        return sum(self.total)
 
     @length_of_rows.getter
     def length_of_rows(self):
-        return sum(self.index)
+        return sum(self.total)
 
     def set_index(self, module: str, missing_values: [tuple[..., int], int]) -> None:
-
         if not isinstance(module, str):
             raise TypeError("The module needs to be a string")
         if module not in self._TYPES:
@@ -48,11 +47,11 @@ class Index:
         if isinstance(missing_values, int):
             if missing_values >= self.length_of_rows:
                 raise ValueError("missing_values is out of bounds")
-            updated_missing_values = check_index(count_false(self.index), missing_values)
+            updated_missing_values = check_index(count_false(self.total), missing_values)
         else:
             if any(elem >= self.length_of_rows for elem in missing_values):
                 raise ValueError("missing_values is out of bounds")
-            updated_missing_values = check_index(count_false(self.index), missing_values)
+            updated_missing_values = check_index(count_false(self.total), missing_values)
         old_index = getattr(self, module)
         index = missing_values_to_boolean(updated_missing_values, old_index)
         setattr(self, module, index)
@@ -60,13 +59,16 @@ class Index:
     def reset_index(self, module: str) -> None:
         if module not in self._TYPES:
             raise ValueError(f"module needs to be one of {' or '.join(self._TYPES)}")
-        reset_index = [True for _ in range(len(self.index))]
+        reset_index = [True for _ in range(len(self.total))]
         setattr(self, module, reset_index)
 
     def _merge_index(self) -> list[..., bool]:
         merged_list = [a and b for a, b in zip(self.missing_data, self.outlier_detection)]
         merged_list = [False if value is False else True for value in merged_list]
         return merged_list
+
+    def __repr__(self):
+        return f"Index: {self.length_of_rows}"
 
 
 def check_index(existing: tuple, new: [tuple, int]) -> tuple[int, ...]:
@@ -92,32 +94,75 @@ def count_false(boolean: list[bool]) -> tuple:
 
 
 class Data:
-    _HIERARCHY = ["raw", "missing_data", "preprocessing_data"]
+    _HIERARCHY = ["raw", "missing_data", "outlier_detection", "preprocessing_data"]
 
     def __init__(self, data: np.ndarray, rows: Index, variables: Index) -> None:
         validate_data(data)
         self.raw = Link(data)
         self.missing_data = Link(data)
         self.preprocessing_data = Link(data)
+        self.outlier_detection = Link(data)
         self.rows = rows
         self.variables = variables
 
-    def set_rows(self, module: str, missing_values: [tuple[..., int], int]) -> None:
-        self.rows.set_index(module, missing_values)
-        data = self.raw.get()
-        index = self.rows.total
-        new_data = data[index]
-        if module == "missing_data":
-            for hierarchy in self._HIERARCHY[1:]:
-                data_type = getattr(self, hierarchy)
-                data_type.set(new_data)
-        else:
-            self.preprocessing_data.set(new_data)
+    @property
+    def data(self) -> np.ndarray:
+        return self.preprocessing_data.get()
 
-    def set_variables(self, module: str, missing_values: [tuple[..., int], int]) -> None:
-        pass
+    @data.getter
+    def data(self) -> np.ndarray:
+        return self.preprocessing_data.get()
+
+    @data.setter
+    def data(self, data) -> None:
+        raise TypeError("data cannot be set from here. Please make a new model")
+
+    def remove_rows(self, module: str, missing_values: [tuple[..., int], int]) -> None:
+        self.rows.set_index(module, missing_values)
+        set_data_from_index(self, module, dimension=0)
+
+    def remove_columns(self, module: str, missing_values: [tuple[..., int], int]) -> None:
+        self.variables.set_index(module, missing_values)
+        set_data_from_index(self, module, dimension=1)
+
+    def reset_index(self, module: str) -> None:
+        self.rows.reset_index(module)
+        self.variables.reset_index(module)
+
+        set_data_from_index(self, module, dimension=0)
+        set_data_from_index(self, module, dimension=1)
 
     def get_raw_data(self) -> np.ndarray:
         data = self.raw.get()
-        index = self.rows.total
-        return data[index]
+        rows = self.rows.total
+        cols = self.variables.total
+        return data[np.outer(rows, cols)]
+
+
+def set_data_from_index(self, module, dimension):
+
+    match module:
+        case "missing_data":
+            data = self.raw.get()
+            if dimension == 0:
+                index = self.rows.total
+                new_data = data[index, :]
+            else:
+                index = self.variables.total
+                new_data = data[:, index]
+
+            for hierarchy in self._HIERARCHY[1:]:
+                data_type = getattr(self, hierarchy)
+                data_type.set(new_data)
+
+        case "outlier_detection":
+            data = self.preprocessing_data.get()
+            if dimension == 0:
+                index = self.rows.total
+                new_data = data[index, :]
+            else:
+                index = self.variables.total
+                new_data = data[:, index]
+            for hierarchy in self._HIERARCHY[2:]:
+                data_type = getattr(self, hierarchy)
+                data_type.set(new_data)
