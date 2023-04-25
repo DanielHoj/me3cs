@@ -41,10 +41,10 @@ class BaseModel:
         self.outlier_detection = OutlierDetection(self)
 
     def reset(self):
-        # self.outlier_detection.reset()
+        self.outlier_detection.reset()
         self.log.log_object.last_model_called = None
         [branch.preprocessing.reset() for branch in self.branches]
-        # [branch.missing_data.reset() for branch in self._branches]
+        [branch.missing_data.reset() for branch in self.branches]
 
     def __repr__(self) -> str:
         return f"me3cs Model"
