@@ -1,39 +1,8 @@
 import numpy as np
 
-from me3cs.framework.helper_classes.base_getter import BaseGetter
-from me3cs.framework.helper_classes.link import Link, create_links, LinkedBranches
-from me3cs.framework.row_index import RowIndex
+from me3cs.framework.data import Data, Index
+from me3cs.framework.helper_classes.link import Link
 from me3cs.preprocessing.called import Called
-
-
-class ScalingReference:
-    """
-    Class for computing scaling reference values for data.
-
-    Parameters
-    ----------
-    data : np.ndarray
-        Data for which scaling reference values are to be computed.
-    axis : int, optional
-        Axis along which to compute reference values. Default is 0.
-
-    Attributes
-    ----------
-    mean : np.ndarray
-        Mean of the data along the specified axis.
-    std : np.ndarray
-        Standard deviation of the data along the specified axis.
-    median : np.ndarray
-        Median of the data along the specified axis.
-    sqrt_std : np.ndarray
-        Square root of the standard deviation of the data along the specified axis.
-    """
-
-    def __init__(self, data: np.ndarray, axis=0):
-        self.mean: np.ndarray = data.mean(axis=axis)
-        self.std: np.ndarray = data.std(axis=axis)
-        self.median: np.ndarray = np.median(data, axis=axis)
-        self.sqrt_std: np.ndarray = np.sqrt(data.std(axis=axis))
 
 
 def sort_function_order(func):
@@ -58,7 +27,7 @@ def sort_function_order(func):
     return inner
 
 
-class PreprocessingBaseClass(BaseGetter):
+class PreprocessingBaseClass:
     """
     Base class for preprocessing data. Inherits from `BaseGetter`.
 
@@ -66,23 +35,14 @@ class PreprocessingBaseClass(BaseGetter):
     ----------
     data : list[Link, Link, Link] or np.ndarray
         The input data to be preprocessed.
-    linked_branches : None or LinkedBranches, optional
-        Linked branches object. Default is `None`.
+
 
     Attributes
     ----------
-    _raw_data_link : Link
-        A link to the raw data.
-    _missing_data_link : Link
-        A link to the missing data.
-    preprocessing_data_link : Link
-        A link to the preprocessed data.
     called : Called
         Object to keep track of the functions that have been called.
     data_is_centered : bool
         Flag to indicate if the data has been centered.
-    reference : ScalingReference
-        Object containing information about scaling reference.
 
     Methods
     -------
@@ -101,31 +61,28 @@ class PreprocessingBaseClass(BaseGetter):
     sorting the called methods. It also provides attributes for keeping track of the state of the object.
     """
 
-    def __init__(self, data: [list[Link, Link, Link, Link] | np.ndarray],
-                 linked_branches: [None, LinkedBranches] = None, row_idx: [None, RowIndex] = None):
+    def __init__(self, data: [Data, np.ndarray]):
         """
         Initialize the `PreprocessingBaseClass` object.
         """
-        raw_data_link, missing_data_link, preprocessing_data_link, data_link = create_links(data)
-        if linked_branches is not None:
-            self.linked_branches = linked_branches
-        if row_idx is not None:
-            self._row_idx = row_idx
-
-        super().__init__(data_link)
-        self._raw_data_link = raw_data_link
-        self._missing_data_link = missing_data_link
-        self.preprocessing_data_link = preprocessing_data_link
+        if isinstance(data, np.ndarray):
+            data = Data(data, Index(data.shape[0]), Index(data.shape[1]))
+        self.data_class = data
 
         self.called = Called(list(), list(), list())
         self.data_is_centered = False
-        self.reference = ScalingReference(self.data)
 
-    def set_ref(self):
-        """
-        Set the reference for scaling.
-        """
-        self.reference = ScalingReference(self.data)
+    @property
+    def data(self):
+        return self.data_class.data
+
+    @data.getter
+    def data(self):
+        return self.data_class.data
+
+    @data.setter
+    def data(self, data):
+        self.data_class.preprocessing_data.set(data)
 
     def update_is_centered(self, flag: bool) -> None:
         """
@@ -142,11 +99,7 @@ class PreprocessingBaseClass(BaseGetter):
         """
         Reset the object to its original state.
         """
-        if self.linked_branches is not None:
-            self.linked_branches.reset_to_link("_missing_data_link")
-            self.data = self._missing_data_link.get()
-        else:
-            self.data = self._missing_data_link.get()
+        self.data_class.reset_index("outlier_detection")
         self.update_is_centered(False)
         self.called.reset()
 
@@ -172,9 +125,8 @@ class PreprocessingBaseClass(BaseGetter):
             self.called.args = [new for _, new in sorted(zip(index, self.called.args))]
             self.called.kwargs = [new for _, new in sorted(zip(index, self.called.kwargs))]
 
-            data = self._raw_data_link.get()
-            idx = self._row_idx.get_total_index()
-            self.data = data[idx]
+            data = self.data_class.get_raw_data()
+            self.data_class.preprocessing_data.set(data)
 
             self.call_in_order()
 

@@ -1,8 +1,5 @@
-from me3cs.framework.helper_classes.link import LinkedBranches
-
-
 class Results:
-    def __init__(self, linked_branches: LinkedBranches) -> None:
+    def __init__(self) -> None:
         self.calibration = None
         self.cross_validation = None
         self.diagnostics = None

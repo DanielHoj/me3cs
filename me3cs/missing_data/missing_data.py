@@ -1,12 +1,15 @@
 import warnings
 
 import numpy as np
+import typing
 
-from me3cs.framework.helper_classes.base_getter import BaseGetter
-from me3cs.framework.helper_classes.link import Link, create_links, LinkedBranches
+from me3cs.framework.data import Data, count_false
 from me3cs.missing_data.imputation import imputation_algorithms
 from me3cs.missing_data.interpolation import interpolation_algorithms
 from me3cs.preprocessing.called import Called, set_called
+
+if typing.TYPE_CHECKING:
+    from me3cs.framework.branch import Branch
 
 
 def check_nan(data: np.ndarray) -> None:
@@ -29,7 +32,7 @@ def check_nan(data: np.ndarray) -> None:
         warnings.warn("Dataset contain missing values. Consider using the missing_values module.")
 
 
-class MissingData(BaseGetter):
+class MissingData:
     """
     A class for handling missing data in numpy arrays.
 
@@ -37,7 +40,7 @@ class MissingData(BaseGetter):
     ----------
     data : numpy.ndarray
         The input data to handle missing values.
-    linked_branches : me3cs.framework.helper_classes.link.LinkedBranches or None, optional
+    branches : list of Branches
         An object to keep track of the data linkage, by default None.
 
     Attributes
@@ -66,20 +69,28 @@ class MissingData(BaseGetter):
         Reset the data to the raw data.
 
     """
-    def __init__(self, data: [list[Link, Link, Link] | np.ndarray],
-                 linked_branches: [LinkedBranches, None] = None) -> None:
+
+    def __init__(self, data: Data,
+                 branches: list["Branch", ...]) -> None:
         """
         Initialize the MissingData object.
         """
-
-        raw_data_link, missing_data_link, preprocessing_data_link, data_link = create_links(data)
-        super().__init__(data_link)
-        self._raw_data_link = raw_data_link
-        self._missing_data_link = missing_data_link
-        self._preprocessing_data_link = preprocessing_data_link
+        self.data_class = data
         check_nan(self.data)
-        self._linked_branches = linked_branches
+        self._branches = branches
         self.called = Called(list(), list(), list())
+
+    @property
+    def data(self):
+        return self.data_class.data
+
+    @data.getter
+    def data(self):
+        return self.data_class.data
+
+    @data.setter
+    def data(self, data):
+        self.data_class.missing_data.set(data)
 
     @set_called
     def interpolation(self, algorithm: str = "mean") -> None:
@@ -98,9 +109,8 @@ class MissingData(BaseGetter):
         """
         self._check_algorithm_type(algorithm, interpolation_algorithms)
         func = interpolation_algorithms.get(algorithm)
-        result = func(self._raw_data_link.get())
+        result = func(self.data_class.raw.get())
         self.data = result
-        self._missing_data_link.set(result)
 
     @set_called
     def imputation(self, algorithm: str = "emsvd") -> None:
@@ -120,9 +130,8 @@ class MissingData(BaseGetter):
         """
         self._check_algorithm_type(algorithm, imputation_algorithms)
         func = imputation_algorithms.get(algorithm)
-        result = func(self._raw_data_link.get())
+        result = func(self.data_class.raw.get())
         self.data = result
-        self._missing_data_link.set(result)
 
     @set_called
     def remove_nan(self, dim: int = 0) -> None:
@@ -146,17 +155,14 @@ class MissingData(BaseGetter):
         if dim == 1:
             if np.count_nonzero(~np.isnan(self.data).any(axis=0)) == self.data.shape[1]:
                 raise ValueError("No more missing values")
-            result = np.delete(self.data, list(np.isnan(self.data).any(axis=0)), 1)
-
-            self.data = result
-            self._missing_data_link.set(result)
+            missing_values = count_false(~np.isnan(self.data).any(axis=0))
+            [branch.data_class.remove_columns("missing_data", missing_values) for branch in self._branches]
 
         else:
             if np.count_nonzero(~np.isnan(self.data).any(axis=1)) == self.data.shape[0]:
                 raise ValueError("No more missing values")
-
-            row_nan = ~np.isnan(self.data).any(axis=1)
-            self._linked_branches.set_all_rows("_missing_data_link", list(row_nan))
+            missing_values = count_false(~np.isnan(self.data).any(axis=1))
+            [branch.data_class.remove_rows("missing_data", missing_values) for branch in self._branches]
 
     @staticmethod
     def _check_algorithm_type(algorithm_input: str, algorithm_type: [interpolation_algorithms, imputation_algorithms]):
@@ -186,7 +192,7 @@ class MissingData(BaseGetter):
         """
         resets the data to the `raw data`.
         """
-        self._linked_branches.reset_to_link("_raw_data_link")
+        [branch.data_class.reset_index("all") for branch in self._branches]
         self.called.reset()
 
     def call_in_order(self):
@@ -199,5 +205,5 @@ class MissingData(BaseGetter):
         return f"Missing data module\n" \
                f"Nr of missing values: {np.sum(np.isnan(self.data))}\n" \
                f"Nr of missing values removed: " \
-               f"{np.sum(np.isnan(self._raw_data_link.get())) - np.sum(np.isnan(self.data))}\n" \
+               f"{np.sum(np.isnan(self.data_class.raw.get())) - np.sum(np.isnan(self.data))}\n" \
                f"{self.called}\n"

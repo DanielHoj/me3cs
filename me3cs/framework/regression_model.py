@@ -51,8 +51,8 @@ class RegressionModel(BaseModel):
 
     def __regresion_pileline__(self, algorithm: any, reg_results: any):
         # Get raw data
-        x = self.x.get_raw_data()
-        y = self.y.get_raw_data()
+        x = self.x.data_class.get_raw_data()
+        y = self.y.data_class.get_raw_data()
 
         if np.isnan(x).any():
             raise ValueError("x contains missing values. Use the missing_data module to adress the problem")

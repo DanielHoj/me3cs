@@ -2,6 +2,7 @@ import numpy as np
 
 from me3cs.framework.helper_classes.handle_input import validate_data
 from me3cs.framework.helper_classes.link import Link
+from me3cs.misc.handle_data import transform_array_1d_to_2d
 
 
 def missing_values_to_boolean(missing_values: [tuple[..., int], int], old_index: list[..., bool]) -> list[..., bool]:
@@ -62,6 +63,10 @@ class Index:
         reset_index = [True for _ in range(len(self.total))]
         setattr(self, module, reset_index)
 
+    def reset_all(self):
+        reset_index = [True for _ in range(len(self.total))]
+        [setattr(self, module, reset_index) for module in self._TYPES]
+
     def _merge_index(self) -> list[..., bool]:
         merged_list = [a and b for a, b in zip(self.missing_data, self.outlier_detection)]
         merged_list = [False if value is False else True for value in merged_list]
@@ -97,7 +102,11 @@ class Data:
     _HIERARCHY = ["raw", "missing_data", "outlier_detection", "preprocessing_data"]
 
     def __init__(self, data: np.ndarray, rows: Index, variables: Index) -> None:
+
         validate_data(data)
+        data = transform_array_1d_to_2d(data)
+        data = data.astype("float")
+
         self.raw = Link(data)
         self.missing_data = Link(data)
         self.preprocessing_data = Link(data)
@@ -126,20 +135,26 @@ class Data:
         set_data_from_index(self, module, dimension=1)
 
     def reset_index(self, module: str) -> None:
-        self.rows.reset_index(module)
-        self.variables.reset_index(module)
+        if module == "all":
+            self.rows.reset_all()
+            self.variables.reset_all()
+        else:
+            self.rows.reset_index(module)
+            self.variables.reset_index(module)
 
         set_data_from_index(self, module, dimension=0)
         set_data_from_index(self, module, dimension=1)
 
     def get_raw_data(self) -> np.ndarray:
         data = self.raw.get()
-        rows = self.rows.total
-        cols = self.variables.total
-        return data[np.outer(rows, cols)]
+        data = data[self.rows.total, :]
+        data = data[:, self.variables.total]
+        return data
 
 
 def set_data_from_index(self, module, dimension):
+    if module == "all":
+        module = "missing_data"
 
     match module:
         case "missing_data":
@@ -156,13 +171,22 @@ def set_data_from_index(self, module, dimension):
                 data_type.set(new_data)
 
         case "outlier_detection":
-            data = self.preprocessing_data.get()
+            data = self.missing_data.get()
             if dimension == 0:
-                index = self.rows.total
+                index = remove_from_one_list(self.rows.missing_data, self.rows.outlier_detection)
                 new_data = data[index, :]
             else:
-                index = self.variables.total
+                index = remove_from_one_list(self.variables.missing_data, self.variables.outlier_detection)
                 new_data = data[:, index]
             for hierarchy in self._HIERARCHY[2:]:
                 data_type = getattr(self, hierarchy)
                 data_type.set(new_data)
+
+
+def remove_from_one_list(remove: list, keep: list) -> list:
+    remove = remove.copy()
+    keep = keep.copy()
+    for i in range(len(keep)):
+        if not remove[i]:
+            keep[i] = None
+    return [i for i in keep if i is not None]
