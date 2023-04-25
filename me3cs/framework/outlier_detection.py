@@ -22,12 +22,17 @@ class OutlierDetection:
         if not isinstance(self._result.optimal_number_component, (int, np.int64)):
             raise ValueError("optimal number of components must be chosen")
 
+        opt_component = self._result.optimal_number_component - 1
+
         diagnostic = getattr(self._result.diagnostics, diagnostic_name)
-        diagnostic_optimal = diagnostic[:, self._result.optimal_number_component]
+        diagnostic_optimal = diagnostic[:, opt_component]
         diagnostic_optimal = diagnostic_optimal.argsort()
         outliers_to_remove = diagnostic_optimal[-number_of_outliers_to_remove:]
         [branch.data_class.remove_rows("outlier_detection", outliers_to_remove) for branch in self._branches]
         [branch.preprocessing.call_in_order() for branch in self._branches]
+        mdl_type = self._model.log.log_object.last_model_called.lower()
+        call_model = getattr(self._model, mdl_type)
+        call_model()
 
     def remove_outlier_from_q_residuals(self, number_of_outliers_to_remove: int = 1):
         self._remove_outlier_from(number_of_outliers_to_remove, "q_residuals")
@@ -143,7 +148,7 @@ def choose_optimal_component(rmsec: np.ndarray, rmsecv: np.ndarray):
 
     for i, c in enumerate(rmsecv_diff):
         if not c > threshold:
-            return i + rmsec_knee
+            return i + rmsec_knee + 1
 
 
 def normalise(x):
