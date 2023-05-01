@@ -333,11 +333,11 @@ def calculate_vips2(x_scores, x_weights, y_loadings):
 
     k, a = x_weights.shape
     s = np.sum(x_scores ** 2, axis=0) * np.sum(y_loadings ** 2, axis=0)
-    total_s = np.cumsum(s)
+    total_s = np.sum(s)
 
     weights_norm = x_weights / np.linalg.norm(x_weights, axis=0)
     weights_squared = weights_norm**2
 
-    vip = np.sqrt(k/a * np.cumsum(s * weights_squared, axis=1) / total_s)
+    vip = np.sqrt(np.cumsum(s * x_weights**2 * k, axis=1) / total_s * a)
 
     return vip

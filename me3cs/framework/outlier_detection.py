@@ -34,6 +34,19 @@ class OutlierDetection:
         call_model = getattr(self._model, mdl_type)
         call_model()
 
+    def remove_outliers(self, outlier_index: [tuple[..., int], int]) -> None:
+        if not isinstance(outlier_index, (tuple, int)):
+            raise TypeError("outlier_index should be a tuple or an int")
+        if isinstance(outlier_index, tuple):
+            if not isinstance(outlier_index[0], int):
+                raise TypeError("outlier_index should be an int or a tuple of ints")
+
+        [branch.data_class.remove_rows("outlier_detection", outlier_index) for branch in self._branches]
+        [branch.preprocessing.call_in_order() for branch in self._branches]
+        mdl_type = self._model.log.log_object.last_model_called.lower()
+        call_model = getattr(self._model, mdl_type)
+        call_model()
+
     def remove_outlier_from_q_residuals(self, number_of_outliers_to_remove: int = 1):
         self._remove_outlier_from(number_of_outliers_to_remove, "q_residuals")
 
