@@ -1,6 +1,6 @@
 
 <h2> 
-<img src="https://github.com/DanielHoj/me3cs/blob/master/me3cs_logo.png" width="200"  align = "center">
+<img src="https://github.com/DanielHoj/me3cs/blob/master/images/me3cs_logo.png" width="200"  align = "center">
  me3cs - the chemometrical package for python
 </h2>
 
