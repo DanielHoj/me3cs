@@ -26,7 +26,7 @@ The following image illustrates a typical workflow with *me3cs*:
 <img src="https://github.com/DanielHoj/me3cs/blob/master/images/me3cs_workflow.jpg" width="850">
 
 
-So do you want the endless possibilities python offers, but miss a quicker way of doing chemometrical data analysis: *me3cs* is what you need.
+So do you want the endless possibilities python offers, but miss a quicker way of doing chemometrical data analysis: then *me3cs* is what you need.
 
 ## What can it do? <a name="what_can_it_do"></a>
 Main features:
