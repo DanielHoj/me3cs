@@ -10,8 +10,7 @@
 1. [What is it?](#What_is_it)
 2. [Why use it?](#why_use_it)
 3. [What can it do?](#what_can_it_do)
-4. [How do I use it?](#how_do_i_use_it)
-5. [Can you give an example?](#Example)
+5. [But can you give an example?](#Example)
 6. [Installation](#Installation)
 7. [License](#License)
 
@@ -21,6 +20,8 @@
 ## Why use it? <a name="why_use_it"></a>
 *me3cs* allows you to spend more time looking at data and the results, and less time coding (even though coding is fun, it can be time consuming..) 
 This enables you to use an iterative analysis workflow, and gives you an quick and easy way to compare model diagnostics and results.
+The following image illustrates a typical workflow with *me3cs*:\
+<img src="https://github.com/DanielHoj/me3cs/blob/master/flowcharts/me3cs_workflow.jpg" width="800">
 
 So do you want the endless possibilities python offers, but miss a quicker way of doing chemometrical data analysis: *me3cs* is what you need.
 
@@ -36,11 +37,10 @@ Main features:
 * All algorithms are written with numpy or scipy, avoiding major dependencies.
 * Supports data as pandas DataFrames and Series, or numpy ndarrays.
 
-## How do I use it? <a name="how_do_i_use_it"></a>
-For a quick illustration of the *metric* workframe architecture, look at the following flowchart: \
-<img src="https://github.com/DanielHoj/me3cs/blob/master/flowcharts/model_framework.jpg" width="500">
+The structure of a *me3cs* model is illustrated in the following image:\
+<img src="https://github.com/DanielHoj/me3cs/blob/master/flowcharts/me3cs - Model Framework.jpg" width="500">
 
-## Can you give an example?? <a name="Example"></a>
+## But can you give an example?? <a name="Example"></a>
 Yes, you bet!
 
 The following example uses the GluFrucSuc data set from the University of Copenhagen: 
