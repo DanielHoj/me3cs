@@ -145,7 +145,7 @@ which results in the following table:
 | 2     | None                        | 2023-05-01 | 17:22:05 | venetian blinds  | 0.1        | 3                | msc, mean center  | mean center  | 1          | 0           | 1.221995 | 1.775838 | 1.493271 | 3.153602  | 0.125461 |
 | 3     | I think, maybe 4 is better?? | 2023-05-01 | 17:22:29 | venetian blinds  | 0.1        | 4                | msc, mean center  | mean center  | 1          | 0           | 0.975773 | 1.657299 | 0.952132 | 2.746639  | 0.082478 |
 
-From here can different cross-validation types, preprocessing and outlier detection be used, allowing you to create a good model.
+From here can different cross-validation types, preprocessing and outlier detection be used, allowing you to create a good model. If you at any point want to return to a specific model state, you can use the ``mdl.log.set_model_from_log(entry_number)`` where entry_number is the index of the model you want.
 
    
 
