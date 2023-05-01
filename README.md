@@ -23,7 +23,7 @@ This enables you to use an iterative analysis workflow, and gives you a quick an
 The following image illustrates a typical workflow with *me3cs*:
 
 
-<img src="https://github.com/DanielHoj/me3cs/blob/master/flowcharts/me3cs_workflow.jpg" width="850">
+<img src="https://github.com/DanielHoj/me3cs/blob/master/images/me3cs_workflow.jpg" width="850">
 
 
 So do you want the endless possibilities python offers, but miss a quicker way of doing chemometrical data analysis: *me3cs* is what you need.
@@ -43,7 +43,7 @@ Main features:
 The structure of the *me3cs* model class is illustrated in the following image:
 
 
-<img src="https://github.com/DanielHoj/me3cs/blob/master/flowcharts/me3cs - Model Framework.jpg" width="850">
+<img src="https://github.com/DanielHoj/me3cs/blob/master/images/me3cs - Model Framework.jpg" width="850">
 
 
 ## But can you give an example?? <a name="Example"></a>
