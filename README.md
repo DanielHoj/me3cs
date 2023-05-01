@@ -1,12 +1,12 @@
 
 <h2> 
-<img src="https://github.com/DanielHoj/me3cs/blob/master/images/me3cs_logo.png" width="200"  align = "center">
- me3cs - the chemometrical package for python
+  <h1>  me3cs - the chemometrical package for python <h/1>
+<img src="https://github.com/DanielHoj/me3cs/blob/master/images/me3cs_logo.png" width="200"  align = "right">
 </h2>
 
 
 
-# Table of Contents
+## Table of Contents
 1. [What is it?](#What_is_it)
 2. [Why use it?](#why_use_it)
 3. [What can it do?](#what_can_it_do)
@@ -26,7 +26,7 @@ The following image illustrates a typical workflow with *me3cs*:
 <img src="https://github.com/DanielHoj/me3cs/blob/master/images/me3cs_workflow.jpg" width="850">
 
 
-So do you want the endless possibilities python offers, but miss a quicker way of doing chemometrical data analysis: then *me3cs* is what you need.
+So do you want the endless possibilities python offers, but have missed a quicker way of doing chemometrical data analysis in python? Then *me3cs* is what you need.
 
 ## What can it do? <a name="what_can_it_do"></a>
 Main features:
@@ -56,7 +56,7 @@ https://food.ku.dk/english/research_at_food/research_fields/foodomics/algorithms
 The data is NIR measurements of mixture samples with glucose, fructose and succrose. The example illustrates a quick way to make a pls-r model. If other objectives are desired, the appropriate models can likewise be created.
 
 
-***Loading the data***
+### Let's get the data:
 
 The matlab data is loaded as numpy objects, with x as the nir spectra and y as the fructose reference values:
 
@@ -70,7 +70,7 @@ The matlab data is loaded as numpy objects, with x as the nir spectra and y as t
 
 The data can further be visualised, with your favourit plotting package.
 
-***Creating your first model***
+### Making our first model:
  
 A *me3cs* model is created by:
 
@@ -85,7 +85,7 @@ A PLS model can be created simply by calling the pls method:
      
 The cross-validation default settings are *venetian blinds*, but can be changed in ``mdl.options.cross_validation``. If the data has not been preprocessed by a *scaling* method, the data is mean centered prior to creating a PLS model.
 
-***Analysing the results***
+### Analysing the results:
 
 After the PLS model is created, the results can be found in ``mdl.results``. For a regression model the results contain calibration, cross-validation and diagnostic results. 
 
@@ -97,7 +97,7 @@ After the PLS model is created, the results can be found in ``mdl.results``. For
 
 A best guess at the optimal number of components is made in ``mdl.results.optimal_number_component``, but can be changed to what you believe is the correct value. All results are numpys ``ndarray``, and can easily be plotted by a third party library.
 
-***Outliers, Be gone!***
+### Outliers, Be gone:
 
 The ``outliers_detection`` module provides an easy way of removing variable or observational outliers.
 
@@ -110,7 +110,7 @@ This removes the observation with the highest $hotelling\ T\^2$ value at the giv
 Similarly can outliers be removed by and index with ``mdl.outlier_detection.remove_outliers(outlier_index=(1,2,3)``.
 The outliers can be reset to its original state by using the function ``mdl.outlier_detection.reset()``.
 
-***And now, let's try again..***
+### And now, let's try again...
 
 Maybe you decide to check whether preprocessing would achieve a better model. This can easily be done in the ``preprocessing`` module.
 Let's try to use *multiplicative scatter correction* function:
@@ -124,7 +124,7 @@ Now let's make a new pls model:
 
      mdl.pls()    
 
-***Now we're logging***
+### Now we're logging
 
 In the logging module we can quickly access the data that has previously been calculated, and revert the model back to the desired model.
 
