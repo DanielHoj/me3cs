@@ -10,16 +10,16 @@
 1. [What is it?](#What_is_it)
 2. [Why use it?](#why_use_it)
 3. [What can it do?](#what_can_it_do)
-5. [But can you give an example?](#Example)
-6. [Installation](#Installation)
-7. [License](#License)
+4. [But can you give an example?](#Example)
+5. [Installation](#Installation)
+6. [License](#License)
 
 ## What is it? <a name="What_is_it"></a>
-*me3cs* is a high level, centralised framework for chemometrical data analysis in python. It is designed to be simple on the surface, while including the functionality you would need.
+*me3cs* is a high level, centralised framework for chemometrical data analysis in python. It is designed to be simple on the surface, while including the functionalities you would need.
 
 ## Why use it? <a name="why_use_it"></a>
 *me3cs* allows you to spend more time looking at data and the results, and less time coding (even though coding is fun, it can be time consuming..) 
-This enables you to use an iterative analysis workflow, and gives you an quick and easy way to compare model diagnostics and results.
+This enables you to use an iterative analysis workflow, and gives you a quick and easy way to compare model diagnostics and results.
 The following image illustrates a typical workflow with *me3cs*:
 
 
@@ -40,7 +40,7 @@ Main features:
 * All algorithms are written with numpy or scipy, avoiding major dependencies.
 * Supports data as pandas DataFrames and Series, or numpy ndarrays.
 
-The structure of a *me3cs* model is illustrated in the following image:
+The structure of the *me3cs* model class is illustrated in the following image:
 
 
 <img src="https://github.com/DanielHoj/me3cs/blob/master/flowcharts/me3cs - Model Framework.jpg" width="850">
@@ -93,13 +93,13 @@ After the PLS model is created, the results can be found in ``mdl.results``. For
 
 ``mdl.results.crossvalidation`` stores rmse, mse and bias.
 
-``mdl.results.diagnostics`` stores leverage, $Q-$residuals and $hotelling\ T\^2$.
+``mdl.results.diagnostics`` stores leverage, $Q-$ residuals and $hotelling\ T\^2$ values.
 
 A best guess at the optimal number of components is made in ``mdl.results.optimal_number_component``, but can be changed to what you believe is the correct value. All results are numpys ``ndarray``, and can easily be plotted by a third party library.
 
 ***Outliers, Be gone!***
 
-The ``outliers_detection`` module provide an easy way of removing variable or observational outliers.
+The ``outliers_detection`` module provides an easy way of removing variable or observational outliers.
 
 If you want to remove the observation with the highest $hotelling\ T\^2$ value from the diagnostics results, you can call the:
 
