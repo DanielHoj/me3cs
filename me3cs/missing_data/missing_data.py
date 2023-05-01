@@ -1,7 +1,7 @@
+import typing
 import warnings
 
 import numpy as np
-import typing
 
 from me3cs.framework.data import Data, count_false
 from me3cs.missing_data.imputation import imputation_algorithms

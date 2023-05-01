@@ -1,7 +1,8 @@
+import typing
+
 import numpy as np
 import scipy.interpolate as interpolate
 from scipy.signal import argrelextrema
-import typing
 
 if typing.TYPE_CHECKING:
     from me3cs.framework.base_model import BaseModel
@@ -29,6 +30,19 @@ class OutlierDetection:
         diagnostic_optimal = diagnostic_optimal.argsort()
         outliers_to_remove = diagnostic_optimal[-number_of_outliers_to_remove:]
         [branch.data_class.remove_rows("outlier_detection", outliers_to_remove) for branch in self._branches]
+        [branch.preprocessing.call_in_order() for branch in self._branches]
+        mdl_type = self._model.log.log_object.last_model_called.lower()
+        call_model = getattr(self._model, mdl_type)
+        call_model()
+
+    def remove_outliers(self, outlier_index: [tuple[..., int], int]) -> None:
+        if not isinstance(outlier_index, (tuple, int)):
+            raise TypeError("outlier_index should be a tuple or an int")
+        if isinstance(outlier_index, tuple):
+            if not isinstance(outlier_index[0], int):
+                raise TypeError("outlier_index should be an int or a tuple of ints")
+
+        [branch.data_class.remove_rows("outlier_detection", outlier_index) for branch in self._branches]
         [branch.preprocessing.call_in_order() for branch in self._branches]
         mdl_type = self._model.log.log_object.last_model_called.lower()
         call_model = getattr(self._model, mdl_type)

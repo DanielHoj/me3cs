@@ -1,5 +1,5 @@
-from me3cs.missing_data.missing_data import MissingData
 from me3cs.framework.data import Data
+from me3cs.missing_data.missing_data import MissingData
 from me3cs.preprocessing.preprocessing import get_preprocessing_from_dimension
 
 

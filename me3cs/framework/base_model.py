@@ -1,12 +1,12 @@
 import numpy as np
 import pandas as pd
 
+from me3cs.framework.branch import Branch
 from me3cs.framework.data import Data, Index
+from me3cs.framework.helper_classes.options import Options
 from me3cs.framework.log import Log
 from me3cs.framework.outlier_detection import OutlierDetection
 from me3cs.framework.results import Results
-from me3cs.framework.helper_classes.options import Options
-from me3cs.framework.branch import Branch
 from me3cs.misc.handle_data import transform_array_1d_to_2d
 
 
