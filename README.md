@@ -19,7 +19,7 @@
 
 ## Why use it? <a name="why_use_it"></a>
 *me3cs* allows you to spend more time looking at data, and less time coding (even though coding is fun, it can be time consuming..) 
-This enables you to use an iterative analysis workflow, and gives you a quick and easy way to compare model diagnostics and results.
+It enables you to use an iterative analysis workflow, and gives you a quick and easy way to compare model diagnostics and results.
 The following image illustrates a typical workflow with *me3cs*:
 
 
