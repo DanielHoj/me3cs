@@ -1,23 +1,18 @@
-from typing import Union, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 import numpy as np
 
-from me3cs.cross_validation.cross_validation import CrossValidation
+from me3cs.cross_validation.cross_validation import CrossValidationRegression
 from me3cs.framework.base_model import BaseModel
 from me3cs.framework.outlier_detection import choose_optimal_component
 from me3cs.metrics.regression.diagnostics import DiagnosticsPLS
 from me3cs.metrics.regression.metrics import MetricsRegression
 from me3cs.metrics.regression.results import RegressionResults
-from me3cs.models.regression.mlr import MLR
-from me3cs.models.regression.pcr import PCR
-from me3cs.models.regression.pls import PLS
+from me3cs.models.regression import MLR, PCR, PLS
 
 if TYPE_CHECKING:
-    ALGORITHM_TYPES = [MLR, PCR]
-    ALGORITHM_TYPES.extend(list(PLS.values()))
-    ALGORITHM_TYPES = Union[tuple(ALGORITHM_TYPES)]
-
-    REGRESSION_RESULTS_TYPES = Union[tuple(RegressionResults.values())]
+    from me3cs.models.regression import TYPING_ALGORITHM_REGRESSION
+    from me3cs.metrics.regression import TYPING_RESULTS_REGRESSION
 
 
 class RegressionModel(BaseModel):
@@ -75,13 +70,14 @@ class RegressionModel(BaseModel):
         # TODO: implement svm algorithm
         pass
 
-    def __regresion_pileline__(self, algorithm: "ALGORITHM_TYPES", reg_results: "REGRESSION_RESULTS_TYPES") -> None:
+    def __regresion_pileline__(self, algorithm: "TYPING_ALGORITHM_REGRESSION",
+                               reg_results: "TYPING_RESULTS_REGRESSION") -> None:
         """
         Perform regression analysis using the provided algorithm and store the results in the RegressionModel instance.
 
         Parameters
         ----------
-        algorithm : ALGORITHM_TYPES
+        algorithm : TYPING_ALGORITHM_REGRESSION
             The regression algorithm to use.
         reg_results : REGRESSION_RESULTS_TYPES
             The results container for the specific algorithm.
@@ -110,9 +106,7 @@ class RegressionModel(BaseModel):
         y_preprocessing = self.y.preprocessing.called
         called_preprocessing = (x_preprocessing, y_preprocessing)
 
-        cv_regression = CrossValidation["regression"]
-
-        cv = cv_regression(  # Create entries with the cross-validation module
+        cv = CrossValidationRegression(  # Create entries with the cross-validation module
             x=x,
             y=y,
             called_preprocessing=called_preprocessing,
