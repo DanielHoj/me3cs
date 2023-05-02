@@ -1,4 +1,3 @@
-
 import numpy as np
 
 from me3cs.cross_validation.cross_validation_split import CrossValidationSplit
@@ -29,6 +28,7 @@ class PostSplitPreprocessing(Scaling):
     def __init__(self, data: np.ndarray, reference: np.ndarray, called: Called) -> None:
         super(PostSplitPreprocessing, self).__init__(transform_array_1d_to_2d(data))
         self.called = called
+        self._reference = reference
 
     def call_in_order(self) -> None:
         for function, args, kwargs in zip(
@@ -56,12 +56,8 @@ class PreprocessingOnSplitData:
     def apply_preprocessing(self) -> None:
         split = self.split
 
-        if split.y is not None:
-            x_training, y_training = split.training
-            x_test, y_test = split.test
-        else:
-            x_training = split.training[0]
-            x_test = split.test[1]
+        x_training, y_training = split.training
+        x_test, y_test = split.test
 
         (
             preprocessed_training_set_x,
@@ -69,22 +65,19 @@ class PreprocessingOnSplitData:
         ) = apply_preprocessing_on_split_data(
             training_set=x_training, test_set=x_test, called=self.x_called
         )
-        if split.y is not None:
-            (
-                preprocessed_training_set_y,
-                preprocessed_test_set_y,
-            ) = apply_preprocessing_on_split_data(
-                training_set=y_training, test_set=y_test, called=self.y_called
-            )
-            self.test_set = tuple(
-                [preprocessed_training_set_x, preprocessed_training_set_y]
-            )
-            self.training_set = tuple(
-                [preprocessed_test_set_x, preprocessed_test_set_y]
-            )
-        else:
-            self.test_set = tuple([preprocessed_training_set_x])
-            self.training_set = tuple([preprocessed_test_set_x])
+        (
+            preprocessed_training_set_y,
+            preprocessed_test_set_y,
+        ) = apply_preprocessing_on_split_data(
+            training_set=y_training, test_set=y_test, called=self.y_called
+        )
+
+        self.test_set = tuple(
+            [preprocessed_training_set_x, preprocessed_training_set_y]
+        )
+        self.training_set = tuple(
+            [preprocessed_test_set_x, preprocessed_test_set_y]
+        )
 
 
 def apply_preprocessing_on_split_data(
