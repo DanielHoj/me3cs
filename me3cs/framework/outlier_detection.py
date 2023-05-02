@@ -9,12 +9,23 @@ if typing.TYPE_CHECKING:
 
 
 class OutlierDetection:
+    """
+    Class for detecting and removing outliers from the model.
+
+    Parameters
+    ----------
+    model : BaseModel
+        The model for which outlier detection should be performed.
+    """
     def __init__(self, model: "BaseModel"):
         self._branches = model.branches
         self._result = model.results
         self._model = model
 
     def _remove_outlier_from(self, number_of_outliers_to_remove: int, diagnostic_name: str):
+        """
+        Removes the specified number of outliers from the data using the given diagnostic name.
+        """
         if self._result.diagnostics is None:
             raise ReferenceError("diagnostics are not calculated")
         elif not hasattr(self._result.diagnostics, diagnostic_name):
@@ -36,6 +47,15 @@ class OutlierDetection:
         call_model()
 
     def remove_outliers(self, outlier_index: [tuple[..., int], int]) -> None:
+        """
+        Removes the outliers specified by the given indices.
+
+        Parameters
+        ----------
+        outlier_index : tuple[int] or int
+            A tuple or single integer representing the indices of the outliers to be removed.
+        """
+
         if not isinstance(outlier_index, (tuple, int)):
             raise TypeError("outlier_index should be a tuple or an int")
         if isinstance(outlier_index, tuple):
@@ -49,35 +69,56 @@ class OutlierDetection:
         call_model()
 
     def remove_outlier_from_q_residuals(self, number_of_outliers_to_remove: int = 1):
+        """
+        Removes the specified number of outliers from the data based on the Q residuals for the optimal component.
+
+        Parameters
+        ----------
+        number_of_outliers_to_remove : int, optional
+            The number of outliers to remove, by default 1.
+        """
         self._remove_outlier_from(number_of_outliers_to_remove, "q_residuals")
 
     def remove_outlier_from_hotellings_t2(self, number_of_outliers_to_remove: int = 1):
+        """
+        Removes the specified number of outliers from the data based on the Hotelling's T2 statistic for the optimal
+        component.
+
+        Parameters
+        ----------
+        number_of_outliers_to_remove : int, optional
+            The number of outliers to remove, by default 1.
+        """
         self._remove_outlier_from(number_of_outliers_to_remove, "hotelling_t2")
 
     def remove_outlier_from_leverage(self, number_of_outliers_to_remove: int = 1):
+        """
+        Removes the specified number of outliers from the data based on the leverage statistic for the optimal
+        component.
+
+        Parameters
+        ----------
+        number_of_outliers_to_remove : int, optional
+            The number of outliers to remove, by default 1.
+        """
         self._remove_outlier_from(number_of_outliers_to_remove, "leverage")
 
     def reset(self):
+        """
+        Resets the outlier detection by removing any previously removed outliers.
+        """
         [branch.data_class.reset_index("outlier_detection") for branch in self._branches]
 
 
-def index_checker_tuple(existing: tuple, new: tuple) -> list:
-    c = []
-    for element in new:
-        count = sum(1 for x in existing if x <= element)
-        c.append(count + element)
-    return c
-
-
-def index_checker_int(existing: tuple, new: int) -> int:
-    return sum(1 for x in existing if x <= new) + new
-
-
-def count_false(boolean: list[bool]) -> tuple:
-    return tuple(filter(lambda i: not boolean[i], range(len(boolean))))
-
-
 class FindKnee:
+    """
+    Finds and returns the knee point in the curve.
+
+    Returns
+    -------
+    int
+        The index of the knee point in the curve.
+    """
     def __init__(self, rmse: np.ndarray):
         self.y = rmse
         self.x = np.arange(rmse.shape[0])
@@ -150,7 +191,22 @@ class FindKnee:
                 return knee
 
 
-def choose_optimal_component(rmsec: np.ndarray, rmsecv: np.ndarray):
+def choose_optimal_component(rmsec: np.ndarray, rmsecv: np.ndarray) -> int:
+    """
+    Chooses the optimal number of components based on RMSEC and RMSECV values.
+
+    Parameters
+    ----------
+    rmsec : numpy.ndarray
+        The root mean squared error of calibration array.
+    rmsecv : numpy.ndarray
+        The root mean squared error of cross-validation array.
+
+    Returns
+    -------
+    int
+        The optimal number of components.
+    """
     # Find knee of rmsec
     rmsec_knee = FindKnee(rmsec).knee
 
@@ -165,5 +221,18 @@ def choose_optimal_component(rmsec: np.ndarray, rmsecv: np.ndarray):
             return i + rmsec_knee + 1
 
 
-def normalise(x):
+def normalise(x: np.ndarray) -> np.ndarray:
+    """
+    Normalises an input array by scaling its values to the range [0, 1].
+
+    Parameters
+    ----------
+    x : numpy.ndarray
+        The input array to be normalised.
+
+    Returns
+    -------
+    numpy.ndarray
+        The normalised input array.
+    """
     return (x - np.min(x)) / (np.max(x) - np.min(x))

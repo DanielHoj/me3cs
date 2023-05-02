@@ -11,6 +11,36 @@ from me3cs.misc.handle_data import transform_array_1d_to_2d
 
 
 class BaseModel:
+    """
+    A base class for building models in the me3cs module. RegressionModel, DecompositionModel and CalibrationModel is
+    build on this base class.
+
+    Parameters
+    ----------
+    x : np.ndarray, pd.Series, or pd.DataFrame
+        The input data array for the model.
+    y : np.ndarray, pd.Series, or pd.DataFrame, optional
+        The reference data array for the model, by default None.
+
+    Attributes
+    ----------
+    branches : list
+        A list of Branch objects for each data array.
+    x : Branch
+        The Branch object for the input data array x.
+    y : Branch, optional
+        The Branch object for the target data array y, by default None.
+    single_branch : bool
+        Whether the model has a single branch (x only) or not (x and y).
+    results : Results
+        The Results object for storing the model results.
+    options : Options
+        The Options object for storing the model configuration options.
+    log : Log
+        The Log object for logging events during model operations.
+    outlier_detection : OutlierDetection
+        The OutlierDetection object for detecting outliers in the data.
+    """
     def __init__(
             self,
             x: [np.ndarray | pd.Series | pd.DataFrame],
@@ -41,10 +71,22 @@ class BaseModel:
         self.outlier_detection = OutlierDetection(self)
 
     def reset(self):
+        """
+        Reset the model by clearing the outlier detection, last model called,
+        and the preprocessing and missing data information for each branch.
+        """
         self.outlier_detection.reset()
         self.log.log_object.last_model_called = None
         [branch.preprocessing.reset() for branch in self.branches]
         [branch.missing_data.reset() for branch in self.branches]
 
     def __repr__(self) -> str:
+        """
+        Return a string representation of the BaseModel object.
+
+        Returns
+        -------
+        str
+            A string representation of the BaseModel object.
+        """
         return f"me3cs Model"

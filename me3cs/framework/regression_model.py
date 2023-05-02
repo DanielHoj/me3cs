@@ -1,3 +1,5 @@
+from typing import Union, TYPE_CHECKING
+
 import numpy as np
 
 from me3cs.cross_validation.cross_validation import CrossValidation
@@ -10,12 +12,31 @@ from me3cs.models.regression.mlr import MLR
 from me3cs.models.regression.pcr import PCR
 from me3cs.models.regression.pls import PLS
 
+if TYPE_CHECKING:
+    ALGORITHM_TYPES = [MLR, PCR]
+    ALGORITHM_TYPES.extend(list(PLS.values()))
+    ALGORITHM_TYPES = Union[tuple(ALGORITHM_TYPES)]
+
+    REGRESSION_RESULTS_TYPES = Union[tuple(RegressionResults.values())]
+
 
 class RegressionModel(BaseModel):
+    """
+    Class for regression model analysis, including PLS, PCR, MLR.
+    """
+
     def pls(
             self,
             algorithm: str = "SIMPLS",
     ) -> None:
+        """
+        Perform partial least squares (PLS) regression analysis with the specified algorithm.
+
+        Parameters
+        ----------
+        algorithm : str, optional
+            PLS algorithm to use, default is "SIMPLS". Implemented algorithms are SIMPLS and NIPALS
+        """
         if algorithm not in list(PLS.keys()):
             raise ValueError(
                 f"Please input {list(PLS.keys())} as algorithm. {algorithm} was input"
@@ -27,6 +48,9 @@ class RegressionModel(BaseModel):
         self.__regresion_pileline__(algorithm=algorithm, reg_results=reg_results)
 
     def pcr(self):
+        """
+        Perform principal component regression (PCR) analysis.
+        """
         # Get algorithm
         algorithm = PCR
         reg_results = RegressionResults["PCR"]
@@ -34,7 +58,9 @@ class RegressionModel(BaseModel):
         self.__regresion_pileline__(algorithm=algorithm, reg_results=reg_results)
 
     def mlr(self):
-
+        """
+        Perform multiple linear regression (MLR) analysis.
+        """
         # Get algorithm
         algorithm = MLR
         reg_results = RegressionResults["MLR"]
@@ -49,7 +75,17 @@ class RegressionModel(BaseModel):
         # TODO: implement svm algorithm
         pass
 
-    def __regresion_pileline__(self, algorithm: any, reg_results: any):
+    def __regresion_pileline__(self, algorithm: "ALGORITHM_TYPES", reg_results: "REGRESSION_RESULTS_TYPES") -> None:
+        """
+        Perform regression analysis using the provided algorithm and store the results in the RegressionModel instance.
+
+        Parameters
+        ----------
+        algorithm : ALGORITHM_TYPES
+            The regression algorithm to use.
+        reg_results : REGRESSION_RESULTS_TYPES
+            The results container for the specific algorithm.
+        """
         # Get raw data
         x = self.x.data_class.get_raw_data()
         y = self.y.data_class.get_raw_data()
@@ -94,6 +130,7 @@ class RegressionModel(BaseModel):
         model = algorithm(  # Create calibration model
             x=x_prep, y=y_prep, n_components=self.options.n_components
         )
+
         calibration_results = reg_results(x_prep, y_prep, model)
         diagnostics = DiagnosticsPLS(x_prep, calibration_results)
         n_components = choose_optimal_component(calibration_results.rmse, cv.results.rmse)

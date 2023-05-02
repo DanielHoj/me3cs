@@ -1,25 +1,10 @@
 import numpy as np
 
 from me3cs.framework.data import Data, Index
-from me3cs.framework.helper_classes.link import Link
 from me3cs.preprocessing.called import Called
 
 
 def sort_function_order(func):
-    """
-    A decorator that ensures that the _sort_order() method is called after the decorated method.
-
-    Parameters
-    ----------
-    func : callable
-        The function being decorated.
-
-    Returns
-    -------
-    callable
-        A new function that wraps the original function and calls _sort_order() afterwards.
-    """
-
     def inner(self, *args, **kwargs):
         func(self, *args, **kwargs)
         self._sort_order()
@@ -29,42 +14,34 @@ def sort_function_order(func):
 
 class PreprocessingBaseClass:
     """
-    Base class for preprocessing data. Inherits from `BaseGetter`.
+    Base class for handling preprocessing operations on data.
 
     Parameters
     ----------
-    data : list[Link, Link, Link] or np.ndarray
-        The input data to be preprocessed.
-
+    data : Data or numpy.ndarray
+        The input data to be preprocessed. Can be a Data object from the me3cs framework or a numpy ndarray.
 
     Attributes
     ----------
+    data_class : Data
+        An instance of the Data class from the me3cs framework for handling data operations.
     called : Called
-        Object to keep track of the functions that have been called.
+        An instance of the Called class for storing information about preprocessing functions called.
     data_is_centered : bool
-        Flag to indicate if the data has been centered.
+        Indicates whether the data has been mean centered or not.
 
     Methods
     -------
-    set_ref()
-        Set the reference for scaling.
-    update_is_centered(flag: bool) -> None
-        Update `data_is_centered` attribute with the provided flag.
-    reset() -> None
-        Reset the object to its original state.
-    _sort_order() -> None
-        Sort the called methods in order of their execution.
-
-    Notes
-    -----
-    This class is used as a base class for preprocessing classes. It provides methods for resetting, updating and
-    sorting the called methods. It also provides attributes for keeping track of the state of the object.
+    reset():
+        Resets the preprocessing operations and returns the data to its original state.
+    update_is_centered(flag: bool):
+        Updates the data_is_centered attribute based on the flag provided.
+    call_in_order():
+        Calls the preprocessing functions in the correct order.
     """
 
     def __init__(self, data: [Data, np.ndarray]):
-        """
-        Initialize the `PreprocessingBaseClass` object.
-        """
+
         if isinstance(data, np.ndarray):
             data = Data(data, Index(data.shape[0]), Index(data.shape[1]))
         self.data_class = data
@@ -85,29 +62,16 @@ class PreprocessingBaseClass:
         self.data_class.preprocessing_data.set(data)
 
     def update_is_centered(self, flag: bool) -> None:
-        """
-        Update `data_is_centered` attribute with the provided flag.
 
-        Parameters
-        ----------
-        flag : bool
-            The flag to set for `data_is_centered`.
-        """
         setattr(self, "data_is_centered", flag)
 
     def reset(self) -> None:
-        """
-        Reset the object to its original state.
-        """
+
         self.data_class.reset_index("outlier_detection")
         self.update_is_centered(False)
         self.called.reset()
 
     def _sort_order(self) -> None:
-        """
-        Sort the called methods in order of their execution. Ensures that methods from the 'Scaling'
-        module is called last
-        """
         # Set the order of the called methods so that is always the last method
         sorted_functions_names = [function.__qualname__ for function in self.called.function]
 

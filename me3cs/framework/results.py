@@ -1,4 +1,7 @@
 class Results:
+    """
+    Class to store the results of model calibration, cross-validation, diagnostics, and the optimal number of components.
+    """
     def __init__(self) -> None:
         self.calibration = None
         self.cross_validation = None
@@ -6,6 +9,14 @@ class Results:
         self.optimal_number_component = None
 
     def __repr__(self):
+        """
+        Provides a string representation of the Results class instance with information on the calculated calibration, cross-validation, diagnostics, and the optimal number of components.
+
+        Returns
+        -------
+        str
+            A string representation of the Results class instance.
+        """
         if self.diagnostics is not None:
             cal = ", ".join(self.calibration.__dict__.keys())
             cross_validation = ", ".join(self.cross_validation.__dict__.keys())
