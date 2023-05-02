@@ -23,16 +23,6 @@ class DecompositionModel(BaseModel):
 
         algorithm = PCA[f"{algorithm}"]
 
-        if cross_validation:
-            self.__cross_validation_pipeline__(
-                algorithm=algorithm, results=DecompositionResults
-            )
-        else:
-            model = algorithm(x=x, n_components=self.options.n_components)
-            setattr(
-                self,
-                "results",
-            )
 
     def mcr(self) -> None:
         # TODO: implement MCR algorithm
