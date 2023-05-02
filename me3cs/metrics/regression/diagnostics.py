@@ -6,6 +6,25 @@ from me3cs.models.regression.pls import SIMPLS, NIPALS
 
 
 class DiagnosticsPLS:
+    """
+    Class to calculate the diagnostic values for Partial Least Squares (PLS) regression models.
+
+    Parameters
+    ----------
+    x : np.ndarray
+        The input data.
+    results : [SIMPLS, NIPALS]
+        A PLS regression model, either SIMPLS or NIPALS.
+
+    Attributes
+    ----------
+    q_residuals : np.ndarray
+        The Q residuals of the PLS model.
+    leverage : np.ndarray
+        The leverage of the PLS model.
+    hotelling_t2 : np.ndarray
+        The Hotelling's T^2 statistics for the PLS model.
+    """
     def __init__(
             self,
             x: np.ndarray,

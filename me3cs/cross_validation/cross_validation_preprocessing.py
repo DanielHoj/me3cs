@@ -10,12 +10,25 @@ from me3cs.preprocessing.standardisation import Standardisation
 
 
 class PreSplitPreprocessing(Normalisation, Filtering, Standardisation):
+    """
+    Applies non-scaling preprocessing methods on the input data before splitting it for cross-validation.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The input data to preprocess.
+    called : Called
+        The preprocessing methods to apply on the data.
+    """
     def __init__(self, data: np.ndarray, called: Called) -> None:
         super(PreSplitPreprocessing, self).__init__(transform_array_1d_to_2d(data))
         self.called = called
         self.call_in_order()
 
     def call_in_order(self) -> None:
+        """
+        Applies the preprocessing methods in the order specified by the called attribute.
+        """
         for function, args, kwargs in zip(
                 self.called.function, self.called.args, self.called.kwargs
         ):
@@ -25,12 +38,27 @@ class PreSplitPreprocessing(Normalisation, Filtering, Standardisation):
 
 
 class PostSplitPreprocessing(Scaling):
+    """
+    Applies scaling preprocessing methods on the input data after splitting it for cross-validation.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The input data to preprocess.
+    reference : np.ndarray
+        The reference data used to determine the parameters for the preprocessing methods.
+    called : Called
+        The preprocessing methods to apply on the data.
+    """
     def __init__(self, data: np.ndarray, reference: np.ndarray, called: Called) -> None:
         super(PostSplitPreprocessing, self).__init__(transform_array_1d_to_2d(data))
         self.called = called
         self._reference = reference
 
     def call_in_order(self) -> None:
+        """
+        Applies the preprocessing methods in the order specified by the called attribute.
+        """
         for function, args, kwargs in zip(
                 self.called.function, self.called.args, self.called.kwargs
         ):
@@ -40,6 +68,33 @@ class PostSplitPreprocessing(Scaling):
 
 
 class PreprocessingOnSplitData:
+    """
+    Applies the specified preprocessing methods on the split data for cross-validation.
+
+    Parameters
+    ----------
+    split : CrossValidationSplit
+        The split data for cross-validation.
+    x_called : Called
+        The preprocessing methods to apply on the input feature matrix.
+    y_called : [None, Called], optional, default=None
+        The preprocessing methods to apply on the output target array, if any.
+
+    Attributes
+    ----------
+    split : CrossValidationSplit
+        The split data for cross-validation.
+    x_called : Called
+        The preprocessing methods to apply on the input feature matrix.
+    y_called : [None, Called]
+        The preprocessing methods to apply on the output target array, if any.
+    training_set : None, tuple[list[np.ndarray], list[np.ndarray]]
+        Tuple containing the lists of preprocessed training input data (x_training) and output
+        data (y_training), if any.
+    test_set : None, tuple[list[np.ndarray], list[np.ndarray]]
+        Tuple containing the lists of preprocessed test input data (x_test) and output
+        data (y_test), if any.
+    """
     def __init__(
             self,
             split: CrossValidationSplit,
@@ -54,6 +109,9 @@ class PreprocessingOnSplitData:
         self.apply_preprocessing()
 
     def apply_preprocessing(self) -> None:
+        """
+        Applies the specified preprocessing methods on the split data.
+        """
         split = self.split
 
         x_training, y_training = split.training
@@ -83,6 +141,23 @@ class PreprocessingOnSplitData:
 def apply_preprocessing_on_split_data(
         training_set: list[np.ndarray, ...], test_set: list[np.ndarray, ...], called: Called
 ) -> tuple[list[np.ndarray], list[np.ndarray]]:
+    """
+    Applies the specified preprocessing methods on the training and test sets.
+
+    Parameters
+    ----------
+    training_set : list[np.ndarray, ...]
+        The list of training input data.
+    test_set : list[np.ndarray, ...]
+        The list of test input data.
+    called : Called
+        The preprocessing methods to apply on the data.
+
+    Returns
+    -------
+    tuple[list[np.ndarray], list[np.ndarray]]
+        A tuple containing the lists of preprocessed training and test input data.
+    """
     preprocessed_training_set = []
     preprocessed_test_set = []
 

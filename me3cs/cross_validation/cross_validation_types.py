@@ -8,6 +8,16 @@ from me3cs.misc.handle_data import mask_arr
 
 @dataclass
 class CrossValidationFactory(ABC):
+    """
+    Abstract base class for creating cross-validation data splits.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The input data.
+    n_splits : int, optional
+        The number of splits for cross-validation, by default None.
+    """
     data: np.ndarray
     n_splits: int = None
 
@@ -17,6 +27,18 @@ class CrossValidationFactory(ABC):
 
 @dataclass
 class VenetianBlinds(CrossValidationFactory):
+    """
+    Venetian blinds cross-validation data split.
+
+    Inherits from CrossValidationFactory.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The input data.
+    n_splits : int, optional
+        The number of splits for cross-validation, by default None.
+    """
     def subset(self) -> tuple[list[np.ndarray], list[np.ndarray]]:
         data = self.data.copy()
 
@@ -31,6 +53,18 @@ class VenetianBlinds(CrossValidationFactory):
 
 @dataclass
 class ContiguousBlocks(CrossValidationFactory):
+    """
+    Contiguous blocks cross-validation data split.
+
+    Inherits from CrossValidationFactory.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The input data.
+    n_splits : int, optional
+        The number of splits for cross-validation, by default None.
+    """
     def subset(self) -> tuple[list[np.ndarray], list[np.ndarray]]:
         data = self.data.copy()
         idx = np.arange(data.shape[0])
@@ -43,6 +77,18 @@ class ContiguousBlocks(CrossValidationFactory):
 
 @dataclass
 class RandomBlocks(CrossValidationFactory):
+    """
+    Random blocks cross-validation data split.
+
+    Inherits from CrossValidationFactory.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The input data.
+    n_splits : int, optional
+        The number of splits for cross-validation, by default None.
+    """
     def subset(self) -> list[np.ndarray]:
         data_random = self.data.copy()
         np.random.shuffle(data_random)
@@ -51,6 +97,18 @@ class RandomBlocks(CrossValidationFactory):
 
 @dataclass
 class Custom(CrossValidationFactory):
+    """
+    Custom cross-validation data split.
+
+    Inherits from CrossValidationFactory.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The input data.
+    n_splits : int, optional
+        The number of splits for cross-validation, by default None.
+    """
     def subset(self) -> list[np.ndarray]:
         pass
 

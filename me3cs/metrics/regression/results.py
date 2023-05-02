@@ -14,6 +14,49 @@ class ResultsRegression:
 
 
 class ResultsPLS(ResultsRegression):
+    """
+    Class for storing and calculating the results of PLS regression.
+
+    Parameters
+    ----------
+    x : np.ndarray
+        Input data.
+    y : np.ndarray
+        Output data.
+    results : [SIMPLS, NIPALS]
+        Regression results object containing scores and loadings.
+
+    Attributes
+    ----------
+    reg : np.ndarray
+        Regression coefficients.
+    y_hat : np.ndarray
+        Predicted output values.
+    rmse : float
+        Root-mean-square error (RMSE) of the model.
+    mse : float
+        Mean squared error (MSE) of the model.
+    bias : float
+        Bias of the model.
+    variance : float
+        Variance of the predicted output values (y_hat).
+    x_scores : np.ndarray
+        Matrix of X scores.
+    x_loadings : np.ndarray
+        Matrix of X loadings.
+    x_weight : np.ndarray
+        Matrix of X weights.
+    y_scores : np.ndarray
+        Matrix of Y scores.
+    y_loadings : np.ndarray
+        Matrix of Y loadings.
+    explained_var_x : np.ndarray
+        Explained variance in X.
+    explained_var_y : np.ndarray
+        Explained variance in Y.
+    cum_explained_var_x : np.ndarray
+        Cumulative explained variance in X.
+    """
     def __init__(
             self,
             x: np.ndarray,
@@ -39,6 +82,33 @@ class ResultsPLS(ResultsRegression):
 
 
 class ResultsMLR:
+    """
+    Class for storing and calculating the results of MLR regression.
+
+    Parameters
+    ----------
+    x : np.ndarray
+        Input data.
+    y : np.ndarray
+        Output data.
+    results : MLR
+        Regression results object containing coefficients.
+
+    Attributes
+    ----------
+    reg : np.ndarray
+        Regression coefficients.
+    y_hat : np.ndarray
+        Predicted output values.
+    rmse : float
+        Root-mean-square error (RMSE) of the model.
+    mse : float
+        Mean squared error (MSE) of the model.
+    bias : float
+        Bias of the model.
+    variance : float
+        Variance of the predicted output values (y_hat).
+    """
     def __init__(
             self,
             x: np.ndarray,

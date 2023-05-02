@@ -7,6 +7,25 @@ if TYPE_CHECKING:
 
 
 class CrossValidationPredictor:
+    """
+    Predicts the target values for the test set using the trained models in a cross-validation setting.
+
+    Parameters
+    ----------
+    test_set : tuple[..., np.ndarray]
+        The test set input data.
+    models : list[..., "TYPING_ALGORITHM_REGRESSION"]
+        The list of trained regression models.
+
+    Attributes
+    ----------
+    test_set : tuple[..., np.ndarray]
+        The test set input data.
+    models : list[..., "TYPING_ALGORITHM_REGRESSION"]
+        The list of trained regression models.
+    predictor_results : [None, np.ndarray]
+        The concatenated predictions of the target values for the test set.
+    """
     def __init__(self, test_set: tuple[..., np.ndarray],
                  models: list[..., "TYPING_ALGORITHM_REGRESSION"],
                  ) -> None:
@@ -18,6 +37,9 @@ class CrossValidationPredictor:
         self.predictor()
 
     def predictor(self) -> None:
+        """
+        Computes the predictions for the test set using the trained models.
+        """
         predictor_results = list()
         x_test = self.test_set[0]
         for i, model in enumerate(self.models):
