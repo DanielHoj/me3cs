@@ -24,7 +24,7 @@ class VenetianBlinds(CrossValidationFactory):
             mask_arr(data, np.arange(i, data.shape[0], self.n_splits))
             for i in range(self.n_splits)
         ]
-        test = [data[i :: self.n_splits] for i in range(self.n_splits)]
+        test = [data[i:: self.n_splits] for i in range(self.n_splits)]
 
         return training, test
 
@@ -55,7 +55,8 @@ class Custom(CrossValidationFactory):
         pass
 
 
-class CrossValidationTypes:
-    venetian_blinds = VenetianBlinds
-    contiguous_blocks = ContiguousBlocks
-    random_blocks = RandomBlocks
+cross_validation_types = {
+    "venetian_blinds": VenetianBlinds,
+    "contiguous_blocks": ContiguousBlocks,
+    "random_blocks": RandomBlocks,
+}
