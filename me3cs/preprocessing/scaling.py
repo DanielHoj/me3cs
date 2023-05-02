@@ -91,9 +91,12 @@ class Scaling(PreprocessingBaseClass):
         """
         Scale the data to have zero mean and unit variance.
         """
-
-        constant = -self.data.mean(axis=0)
-        scale = handle_zeros_in_scale(self.data.std(axis=0))
+        if self._reference:
+            constant = -self._reference.mean(axis=0)
+            scale = handle_zeros_in_scale(self._reference.std(axis=0))
+        else:
+            constant = -self.data.mean(axis=0)
+            scale = handle_zeros_in_scale(self.data.std(axis=0))
         self._scale_pipeline(constant, scale)
 
     @scale_once
@@ -102,8 +105,10 @@ class Scaling(PreprocessingBaseClass):
         """
         Subtract the mean from the data.
         """
-
-        constant = -self.data.mean(axis=0)
+        if self._reference:
+            constant = -self._reference.mean(axis=0)
+        else:
+            constant = -self.data.mean(axis=0)
         scale = 1.0
         self._scale_pipeline(constant, scale)
 
@@ -113,9 +118,12 @@ class Scaling(PreprocessingBaseClass):
         """
         Scale the data using square root of standard deviation, and subtracts the mean.
         """
-
-        constant = -self.data.mean(axis=0)
-        scale = handle_zeros_in_scale(np.sqrt(self.data.std(axis=0)))
+        if self._reference:
+            constant = -self._reference.mean(axis=0)
+            scale = handle_zeros_in_scale(np.sqrt(self._reference.std(axis=0)))
+        else:
+            constant = -self.data.mean(axis=0)
+            scale = handle_zeros_in_scale(np.sqrt(self.data.std(axis=0)))
 
         self._scale_pipeline(constant, scale)
 
@@ -125,8 +133,11 @@ class Scaling(PreprocessingBaseClass):
         """
         Subtract the median from the data.
         """
+        if self._reference:
+            constant = -np.median(self._reference, axis=0)
+        else:
+            constant = -np.median(self.data, axis=0)
 
-        constant = -np.median(self.data, axis=0)
         scale = 1.0
 
         self._scale_pipeline(constant, scale)

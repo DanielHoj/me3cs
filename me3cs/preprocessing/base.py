@@ -48,6 +48,7 @@ class PreprocessingBaseClass:
 
         self.called = Called(list(), list(), list())
         self.data_is_centered = False
+        self._reference: [None, np.ndarray] = None
 
     @property
     def data(self):
