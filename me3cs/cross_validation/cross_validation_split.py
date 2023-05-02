@@ -1,41 +1,38 @@
-from dataclasses import dataclass
-
 import numpy as np
 
-from me3cs.cross_validation.cross_validation_types import CrossValidationTypes
+from me3cs.cross_validation import TYPING_CV_STR, cross_validation_types
 
 
-@dataclass
 class CrossValidationSplit:
-    x: np.ndarray
-    y: np.ndarray = None
+    def __init__(self, x: np.ndarray,
+                 y: np.ndarray,
+                 percentage_left_out: float,
+                 cv_type: TYPING_CV_STR,
+                 ) -> None:
 
-    percentage_left_out: float = None
-    _cv_type: str = "venetian_blinds"
-    n_splits: int = None
+        self.x = x
+        self.y = y
 
-    test: [None, tuple[any]] = None
-    training: [None, tuple[any]] = None
+        self.percentage_left_out = percentage_left_out
+        self.n_splits = int(1/percentage_left_out)
+        self.cv_type = cv_type
+
+        self.test: [None, tuple[..., np.ndarray]] = None
+        self.training: [None, tuple[..., np.ndarray]] = None
+
+        self.split(cv_type)
 
     @property
     def cv_type(self) -> str:
-        return self._cv_type
+        return self.cv_type
 
     @cv_type.setter
     def cv_type(self, cv: str) -> None:
-        cv_options = ["venetian_blinds", "contiguous_blocks", "random_blocks"]
-        if cv not in cv_options:
-            raise ValueError(f"Please input {cv_options}. {cv} was input")
-        self.split(cv_type=cv)
-        self._cv_type = cv
-
-    def __post_init__(self) -> None:
-        if self.n_splits is None:
-            self.n_splits = int(1 / self.percentage_left_out)
-        self.split(self.cv_type)
+        if cv not in cross_validation_types.keys():
+            raise ValueError(f"Please input {', '.join(cross_validation_types.keys())}. {cv} was input")
 
     def split(self, cv_type: str) -> None:
-        cv = getattr(CrossValidationTypes, cv_type)
+        cv = cross_validation_types[cv_type]
         x_training, x_test = cv(self.x, self.n_splits).subset()
         if self.y is not None:
             y_training, y_test = cv(self.y, self.n_splits).subset()
