@@ -106,8 +106,8 @@ If you want to remove the observation with the highest $hotelling\ T\^2$ value f
 
     mdl.outlier_detection.remove_outlier_from_hotellings_t2()
     
-This removes the observation with the highest $hotelling\ T\^2$ value at the given optimal number of components, and calculates a new pls model. Similarly can observations be removed based on the leverage and $Q-$residuals. 
-Similarly can outliers be removed by and index with ``mdl.outlier_detection.remove_outliers(outlier_index=(1,2,3)``.
+This removes the observation with the highest $hotelling\ T\^2$ value at the given optimal number of components, and calculates a new pls model. Similarly can observations be removed based on the leverage and $Q$-residuals. 
+Similarly can outliers be removed by and index with ``mdl.outlier_detection.remove_outliers(outlier_index=(1,2,3)``, this will remove observation 2,3 and 4.
 The outliers can be reset to its original state by using the function ``mdl.outlier_detection.reset()``.
 
 ### And now, let's try again...
