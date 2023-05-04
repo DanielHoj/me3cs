@@ -156,7 +156,7 @@ class MissingData:
             if np.count_nonzero(~np.isnan(self.data).any(axis=0)) == self.data.shape[1]:
                 raise ValueError("No more missing values")
             missing_values = count_false(~np.isnan(self.data).any(axis=0))
-            [branch.data_class.remove_columns("missing_data", missing_values) for branch in self._branches]
+            self._branches[0].data_class.remove_columns("missing_data", missing_values)
 
         else:
             if np.count_nonzero(~np.isnan(self.data).any(axis=1)) == self.data.shape[0]:
