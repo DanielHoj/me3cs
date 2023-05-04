@@ -40,17 +40,9 @@ class BasePLS(ABC):
         The scores of the response variables of shape (n_samples, n_components).
     reg : np.ndarray
         The regression coefficients of shape (n_features, n_response).
-
-    Methods
-    -------
-    fit()
-        Fits the PLS model to the data.
     """
+
     def __init__(self, x: np.ndarray, y: np.ndarray, n_components: int = 10) -> None:
-        """
-        Initializes the `BasePLS` class with the given predictor variable `x`, response variable `y`,
-        and the number of components to compute `n_components`.
-        """
         self.x = x
         self.y = y
         self.n_components = n_components
@@ -66,9 +58,6 @@ class BasePLS(ABC):
         )
 
     def fit(self) -> None:
-        """
-        Fits the PLS model to the data.
-        """
         pass
 
 
@@ -118,10 +107,12 @@ class NIPALS(BasePLS):
     -----
     This class inherits from BasePLS class.
     """
+
     def fit(self) -> None:
         """
         Fit the NIPALS model.
         """
+        pass
 
 
 class SIMPLS(BasePLS):
@@ -181,6 +172,7 @@ class SIMPLS(BasePLS):
        squares regression." Chemometrics and Intelligent Laboratory Systems
        18.3 (1993): 251-263.
     """
+
     def fit(self) -> None:
         """
         Fit the SIMPLS model.
