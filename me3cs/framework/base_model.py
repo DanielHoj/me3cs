@@ -7,6 +7,7 @@ from me3cs.framework.helper_classes.options import Options
 from me3cs.framework.log import Log
 from me3cs.framework.outlier_detection import OutlierDetection
 from me3cs.framework.results import Results
+from me3cs.framework.variable_selection import VariableSelection
 from me3cs.misc.handle_data import transform_array_1d_to_2d
 
 
@@ -69,6 +70,7 @@ class BaseModel:
         self.options = Options()
         self.log = Log(self, self.results, self.options)
         self.outlier_detection = OutlierDetection(self)
+        self.variable_selection = VariableSelection(self)
 
     def reset(self):
         """
