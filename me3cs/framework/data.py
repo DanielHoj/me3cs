@@ -254,7 +254,7 @@ class Data:
             The indices of the rows to remove.
         """
         self.rows.set_index(module, missing_values)
-        set_data_from_index(self, module, dimension=0)
+        set_data_from_index(self, module)
 
     def remove_columns(self, module: str, missing_values: [tuple[..., int], int]) -> None:
         """
@@ -268,7 +268,7 @@ class Data:
             The indices of the columns to remove.
         """
         self.variables.set_index(module, missing_values)
-        set_data_from_index(self, module, dimension=1)
+        set_data_from_index(self, module)
 
     def reset_index(self, module: str) -> None:
         """
@@ -286,8 +286,7 @@ class Data:
             self.rows.reset_index(module)
             self.variables.reset_index(module)
 
-        set_data_from_index(self, module, dimension=0)
-        set_data_from_index(self, module, dimension=1)
+        set_data_from_index(self, module)
 
     def get_raw_data(self) -> np.ndarray:
         """
@@ -304,7 +303,7 @@ class Data:
         return data
 
 
-def set_data_from_index(self, module, dimension):
+def set_data_from_index(self, module: str):
     """
     Sets the data attribute of the Data class based on the specified module and dimension.
 
@@ -314,8 +313,6 @@ def set_data_from_index(self, module, dimension):
         The Data class instance.
     module : str
         The name of the module to set data from.
-    dimension : int
-        The dimension to set data along (0 for rows, 1 for columns).
     """
 
     if module == "all":
@@ -324,12 +321,10 @@ def set_data_from_index(self, module, dimension):
     match module:
         case "missing_data":
             data = self.raw.get()
-            if dimension == 0:
-                index = self.rows.total
-                new_data = data[index, :]
-            else:
-                index = self.variables.total
-                new_data = data[:, index]
+
+            rows = self.rows.total
+            variables = self.variables.total
+            new_data = data[np.ix_(rows, variables)]
 
             for hierarchy in self._HIERARCHY[1:]:
                 data_type = getattr(self, hierarchy)
@@ -337,12 +332,11 @@ def set_data_from_index(self, module, dimension):
 
         case "outlier_detection":
             data = self.missing_data.get()
-            if dimension == 0:
-                index = remove_from_one_list(self.rows.missing_data, self.rows.outlier_detection)
-                new_data = data[index, :]
-            else:
-                index = remove_from_one_list(self.variables.missing_data, self.variables.outlier_detection)
-                new_data = data[:, index]
+
+            rows = remove_from_one_list(self.rows.missing_data, self.rows.outlier_detection)
+            variables = remove_from_one_list(self.variables.missing_data, self.variables.outlier_detection)
+            new_data = data[np.ix_(rows, variables)]
+
             for hierarchy in self._HIERARCHY[2:]:
                 data_type = getattr(self, hierarchy)
                 data_type.set(new_data)
