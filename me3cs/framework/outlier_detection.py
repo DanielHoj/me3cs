@@ -40,11 +40,7 @@ class OutlierDetection:
         diagnostic_optimal = diagnostic[:, opt_component]
         diagnostic_optimal = diagnostic_optimal.argsort()
         outliers_to_remove = diagnostic_optimal[-number_of_outliers_to_remove:]
-        [branch.data_class.remove_rows("outlier_detection", outliers_to_remove) for branch in self._branches]
-        [branch.preprocessing.call_in_order() for branch in self._branches]
-        mdl_type = self._model.log.log_object.last_model_called.lower()
-        call_model = getattr(self._model, mdl_type)
-        call_model()
+        self.remove_outliers(tuple(outliers_to_remove))
 
     def remove_outliers(self, outlier_index: [tuple[..., int], int]) -> None:
         """
@@ -55,18 +51,17 @@ class OutlierDetection:
         outlier_index : tuple[int] or int
             A tuple or single integer representing the indices of the outliers to be removed.
         """
-
         if not isinstance(outlier_index, (tuple, int)):
-            raise TypeError("outlier_index should be a tuple or an int")
-        if isinstance(outlier_index, tuple):
-            if not isinstance(outlier_index[0], int):
-                raise TypeError("outlier_index should be an int or a tuple of ints")
+            raise TypeError("Input needs to be an int or a tuple of ints")
+        if isinstance(outlier_index, tuple) and not all(isinstance(x, (int, np.int64)) for x in outlier_index):
+            raise TypeError("Input needs to be an int or a tuple of ints")
 
         [branch.data_class.remove_rows("outlier_detection", outlier_index) for branch in self._branches]
         [branch.preprocessing.call_in_order() for branch in self._branches]
-        mdl_type = self._model.log.log_object.last_model_called.lower()
-        call_model = getattr(self._model, mdl_type)
-        call_model()
+        if self._model.log.log_object.last_model_called:
+            mdl_type = self._model.log.log_object.last_model_called.lower()
+            call_model = getattr(self._model, mdl_type)
+            call_model()
 
     def remove_outlier_from_q_residuals(self, number_of_outliers_to_remove: int = 1):
         """
@@ -108,16 +103,12 @@ class OutlierDetection:
         Resets the outlier detection by removing any previously removed outliers.
         """
         [branch.data_class.reset_index("outlier_detection") for branch in self._branches]
+        [branch.preprocessing.call_in_order() for branch in self._branches]
 
 
 class FindKnee:
     """
     Finds and returns the knee point in the curve.
-
-    Returns
-    -------
-    int
-        The index of the knee point in the curve.
     """
     def __init__(self, rmse: np.ndarray):
         self.y = rmse
