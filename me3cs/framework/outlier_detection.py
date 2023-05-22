@@ -58,10 +58,7 @@ class OutlierDetection:
 
         [branch.data_class.remove_rows("outlier_detection", outlier_index) for branch in self._branches]
         [branch.preprocessing.call_in_order() for branch in self._branches]
-        if self._model.log.log_object.last_model_called:
-            mdl_type = self._model.log.log_object.last_model_called.lower()
-            call_model = getattr(self._model, mdl_type)
-            call_model()
+        call_model(self)
 
     def remove_outlier_from_q_residuals(self, number_of_outliers_to_remove: int = 1):
         """
@@ -102,8 +99,27 @@ class OutlierDetection:
         """
         Resets the outlier detection by removing any previously removed outliers.
         """
-        [branch.data_class.reset_index("outlier_detection") for branch in self._branches]
+        [branch.data_class.reset_index("outlier_detection", dimension="rows") for branch in self._branches]
         [branch.preprocessing.call_in_order() for branch in self._branches]
+        call_model(self)
+
+    def __repr__(self) -> str:
+        """
+        Return a string representation of the OutlierDetection object.
+
+        Returns
+        -------
+        str
+            A string representation of the Branch object.
+        """
+        return f"Data shape: {self._model.x.data.shape}\n"
+
+
+def call_model(self):
+    if self._model.log.log_object.last_model_called:
+        mdl_type = self._model.log.log_object.last_model_called.lower()
+        model = getattr(self._model, mdl_type)
+        model()
 
 
 class FindKnee:

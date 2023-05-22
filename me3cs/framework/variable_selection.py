@@ -33,8 +33,20 @@ class VariableSelection:
         call_model(self)
 
     def reset(self):
-        self._model.x.data_class.reset_index("outlier_detection")
+        self._model.x.data_class.reset_index("outlier_detection", dimension="variables")
         self._model.x.preprocessing.call_in_order()
+        call_model(self)
+
+    def __repr__(self) -> str:
+        """
+        Return a string representation of the VariableSelection object.
+
+        Returns
+        -------
+        str
+            A string representation of the Branch object.
+        """
+        return f"Data shape: {self._model.x.data.shape}\n"
 
 
 def call_model(self):

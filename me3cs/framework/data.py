@@ -270,7 +270,7 @@ class Data:
         self.variables.set_index(module, missing_values)
         set_data_from_index(self, module)
 
-    def reset_index(self, module: str) -> None:
+    def reset_index(self, module: str, dimension: str) -> None:
         """
         Resets the indices of the specified module.
 
@@ -278,13 +278,34 @@ class Data:
         ----------
         module : str
             The name of the module to reset indices for.
+        dimension: str
+            The dimension the reset_index should apply to. Can either be "all", "rows" or "variables"
         """
-        if module == "all":
-            self.rows.reset_all()
-            self.variables.reset_all()
-        else:
-            self.rows.reset_index(module)
-            self.variables.reset_index(module)
+
+        if not isinstance(dimension, str):
+            raise TypeError("'dimension' should be a string")
+        dim_types = ["all", "rows", "variables"]
+        if dimension not in dim_types:
+            raise TypeError(f"'dimension' should be one of {'or '.join(dim_types)}")
+
+        match dimension:
+            case "all":
+                if module == "all":
+                    self.rows.reset_all()
+                    self.variables.reset_all()
+                else:
+                    self.rows.reset_index(module)
+                    self.variables.reset_index(module)
+            case "rows":
+                if module == "all":
+                    self.rows.reset_all()
+                else:
+                    self.rows.reset_index(module)
+            case "variables":
+                if module == "all":
+                    self.variables.reset_all()
+                else:
+                    self.variables.reset_index(module)
 
         set_data_from_index(self, module)
 
