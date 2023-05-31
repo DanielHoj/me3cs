@@ -107,7 +107,7 @@ A best guess at the optimal number of components is made in ``mdl.results.optima
 
 ### Outliers, Be gone:
 
-The ``outliers_detection`` module provides an easy way of removing variable or observational outliers.
+The ``outliers_detection`` module provides an easy way of removing observational outliers.
 
 If you want to remove the observation with the highest hotelling $T\^2$ value from the diagnostics results, you can call the:
 
@@ -117,7 +117,7 @@ mdl.outlier_detection.remove_outlier_from_hotellings_t2()
 ```
     
 This removes the observation with the highest hotelling $T\^2$ value at the given optimal number of components, and calculates a new pls model. Similarly can observations be removed based on the leverage and $Q$ - residuals. 
-Similarly can outliers be removed by and index with ``mdl.outlier_detection.remove_outliers(outlier_index=(1,2,3)``, this will remove observation 2,3 and 4.
+Outliers can also be removed by an index with ``mdl.outlier_detection.remove_outliers(outlier_index=(1,2,3)``, this will remove observation 2,3 and 4.
 The outliers can be reset to its original state by using the function ``mdl.outlier_detection.reset()``.
 
     
