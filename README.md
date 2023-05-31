@@ -7,14 +7,14 @@
 
 
 ## Table of Contents
-1. [What is it?](#What_is_it)
+1. [What is it?](#what_is_it)
 2. [Why use it?](#why_use_it)
 3. [What can it do?](#what_can_it_do)
-4. [But can you give an example?](#Example)
-5. [Installation](#Installation)
-6. [License](#License)
+4. [But can you give an example?](#example)
+5. [Installation](#installation)
+6. [License](#license)
 
-## What is it? <a name="What_is_it"></a>
+## What is it? <a name="what_is_it"></a>
 *me3cs* is a high level, centralised framework for chemometrical data analysis in python. It is designed to be simple on the surface, while including the functionalities you would need.
 
 ## Why use it? <a name="why_use_it"></a>
@@ -46,7 +46,7 @@ The structure of the *me3cs* model class is illustrated in the following image:
 <img src="https://github.com/DanielHoj/me3cs/blob/master/images/me3cs - Model Framework.jpg" width="850">
 
 
-## But can you give an example?? <a name="Example"></a>
+## But can you give an example?? <a name="example"></a>
 Yes, you bet!
 
 The following example uses the GluFrucSuc data set from the University of Copenhagen: 
@@ -149,12 +149,12 @@ From here can different cross-validation types, preprocessing and outlier detect
 
    
 
-## Installation <a name="Installation"></a>
+## Installation <a name="installation"></a>
 The *me3cs* package can be installed with pypi:
 
     pip install me3cs
 
-## License <a name="License"></a>
+## License <a name="license"></a>
 [BSD 3](LICENSE.txt)
 
 
