@@ -139,6 +139,7 @@ In the logging module we can quickly access the data that has previously been ca
 
 So far we have been logging our results, everytime the ``mdl.pls()`` method has been called. It is also possible to manually make an entry in the log with the ``mdl.log.make_entry()`` method. If we for instance decide that the optimal number of components is 4, we can set it to that and make an entry with a comment:
 ```python
+mdl.results.optimal_number_component = 4
 mdl.log.make_entry("I think, maybe 4 is better??")
 ```
     
