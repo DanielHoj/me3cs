@@ -91,13 +91,28 @@ class Scaling(PreprocessingBaseClass):
         """
         Scale the data to have zero mean and unit variance.
         """
-        if self._reference:
-            constant = -self._reference.mean(axis=0)
-            scale = handle_zeros_in_scale(self._reference.std(axis=0))
-        else:
-            constant = -self.data.mean(axis=0)
-            scale = handle_zeros_in_scale(self.data.std(axis=0))
-        self._scale_pipeline(constant, scale)
+
+        match self.mode:
+            case "preprocess":
+                constant = self.data.mean(axis=0)
+                self.scaling_attributes.mean = constant
+
+                scale = handle_zeros_in_scale(self.data.std(axis=0))
+                self.scaling_attributes.std = scale
+                self._scale_pipeline(-constant, scale)
+
+            case "reference":
+                constant = self._reference.mean(axis=0)
+                scale = handle_zeros_in_scale(self._reference.std(axis=0))
+                self._scale_pipeline(-constant, scale)
+
+            case "predict":
+                try:
+                    constant = self.scaling_attributes.mean
+                    scale = self.scaling_attributes.std
+                    self._scale_pipeline(-constant, scale)
+                except ValueError:
+                    print("Autoscaling has not been called")
 
     @scale_once
     @set_called
@@ -105,12 +120,22 @@ class Scaling(PreprocessingBaseClass):
         """
         Subtract the mean from the data.
         """
-        if self._reference:
-            constant = -self._reference.mean(axis=0)
-        else:
-            constant = -self.data.mean(axis=0)
-        scale = 1.0
-        self._scale_pipeline(constant, scale)
+        match self.mode:
+            case "preprocess":
+                constant = self.data.mean(axis=0)
+                self.scaling_attributes.mean = constant
+                self._scale_pipeline(-constant, 1.0)
+
+            case "reference":
+                constant = self._reference.mean(axis=0)
+                self._scale_pipeline(-constant, 1.0)
+
+            case "predict":
+                try:
+                    constant = self.scaling_attributes.mean
+                    self._scale_pipeline(-constant, 1.0)
+                except ValueError:
+                    print("mean_center has not been called")
 
     @scale_once
     @set_called
@@ -118,14 +143,29 @@ class Scaling(PreprocessingBaseClass):
         """
         Scale the data using square root of standard deviation, and subtracts the mean.
         """
-        if self._reference:
-            constant = -self._reference.mean(axis=0)
-            scale = handle_zeros_in_scale(np.sqrt(self._reference.std(axis=0)))
-        else:
-            constant = -self.data.mean(axis=0)
-            scale = handle_zeros_in_scale(np.sqrt(self.data.std(axis=0)))
+        match self.mode:
+            case "preprocess":
+                constant = self.data.mean(axis=0)
+                self.scaling_attributes.mean = constant
 
-        self._scale_pipeline(constant, scale)
+                scale = handle_zeros_in_scale(np.sqrt(self.data.std(axis=0)))
+                self.scaling_attributes.sqrt_std = scale
+
+                self._scale_pipeline(-constant, scale)
+
+            case "reference":
+                constant = self._reference.mean(axis=0)
+                scale = handle_zeros_in_scale(np.sqrt(self._reference.std(axis=0)))
+                self._scale_pipeline(-constant, scale)
+
+            case "predict":
+                try:
+                    constant = self.scaling_attributes.mean
+                    scale = self.scaling_attributes.sqrt_std
+                    self._scale_pipeline(-constant, scale)
+
+                except ValueError:
+                    print("Autoscaling has not been called")
 
     @scale_once
     @set_called
@@ -133,11 +173,19 @@ class Scaling(PreprocessingBaseClass):
         """
         Subtract the median from the data.
         """
-        if self._reference:
-            constant = -np.median(self._reference, axis=0)
-        else:
-            constant = -np.median(self.data, axis=0)
+        match self.mode:
+            case "preprocess":
+                constant = np.median(self.data, axis=0)
+                self.scaling_attributes.median = constant
+                self._scale_pipeline(-constant, 1.0)
 
-        scale = 1.0
+            case "reference":
+                constant = np.median(self._reference, axis=0)
+                self._scale_pipeline(-constant, 1.0)
 
-        self._scale_pipeline(constant, scale)
+            case "predict":
+                try:
+                    constant = self.scaling_attributes.median
+                    self._scale_pipeline(-constant, 1.0)
+                except ValueError:
+                    print("mean_center has not been called")

@@ -46,6 +46,9 @@ class Normalisation(PreprocessingBaseClass):
             of the spectral data will be used as reference.
         """
         data = self.data
+        
+        if self.mode == "predict":
+            reference = self.scaling_attributes.mean
 
         if reference is None:
             # Set reference data

@@ -51,7 +51,7 @@ class PostSplitPreprocessing(Scaling):
         The preprocessing methods to apply on the data.
     """
     def __init__(self, data: np.ndarray, reference: np.ndarray, called: Called) -> None:
-        super(PostSplitPreprocessing, self).__init__(transform_array_1d_to_2d(data))
+        super(PostSplitPreprocessing, self).__init__(transform_array_1d_to_2d(data), mode="cross_validation")
         self.called = called
         self._reference = reference
 

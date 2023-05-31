@@ -10,6 +10,7 @@ from me3cs.framework.branch import Branch
 from me3cs.framework.data import Data
 from me3cs.framework.helper_classes.options import Options
 from me3cs.framework.results import Results
+from me3cs.preprocessing.base import ScalingAttributes
 from me3cs.preprocessing.called import Called
 
 if typing.TYPE_CHECKING:
@@ -84,6 +85,7 @@ class LogObject:
     """
     def __init__(self,
                  prep: tuple[Called, ...],
+                 prep_attr: tuple[ScalingAttributes, ...],
                  missing_data: tuple[Called, ...],
                  data: tuple[Data, ...],
                  results: Results,
@@ -92,10 +94,12 @@ class LogObject:
 
         if len(prep) > 0:
             self.x_prep, self.y_prep = prep
+            self.x_prep_attr, self.y_prep_attr = prep_attr
             self.x_missing, self.y_missing = missing_data
             self.x_data, self.y_data = data
         else:
             self.x_prep = prep[0]
+            self.x_prep_attr = prep_attr[0]
             self.x_missing = missing_data[0]
             self.x_data = data[0]
 
@@ -103,6 +107,7 @@ class LogObject:
         self.options = options
 
         self.prep = prep
+        self.prep_attr = prep_attr
         self.missing_data = missing_data
         self.data = data
         self.rows = data[0].rows.total
@@ -132,7 +137,7 @@ class LogObject:
         LogObject
             A shallow copy of the LogObject instance.
         """
-        new_obj = LogObject(self.prep, self.missing_data, self.data, self.results, self.options)
+        new_obj = LogObject(self.prep, self.prep_attr, self.missing_data, self.data, self.results, self.options)
         new_obj.created_at = datetime.datetime.now().replace(microsecond=0)
         new_obj.last_model_called = self.last_model_called
         return new_obj
@@ -151,7 +156,8 @@ class LogObject:
         LogObject
             A deep copy of the LogObject instance.
         """
-        new_obj = LogObject(deepcopy(self.prep, memo), deepcopy(self.missing_data, memo),
+        new_obj = LogObject(deepcopy(self.prep, memo), deepcopy(self.prep_attr),
+                            deepcopy(self.missing_data, memo),
                             deepcopy(self.data, memo), deepcopy(self.results, memo),
                             deepcopy(self.options, memo),
                             )
@@ -209,11 +215,12 @@ class Log:
 
         self.branches = model.branches
         prep = tuple(prep.preprocessing.called for prep in self.branches)
+        prep_attr = tuple(prep.preprocessing.scaling_attributes for prep in self.branches)
         missing_data = tuple(missing.missing_data.called for missing in self.branches)
         data = tuple(data.data_class for data in self.branches)
 
         self._model = model
-        self.log_object = LogObject(prep, missing_data, data, results, options)
+        self.log_object = LogObject(prep, prep_attr, missing_data, data, results, options)
         self.entries = []
 
     def make_entry(self, comment: [str, None] = None) -> None:
@@ -261,7 +268,12 @@ class Log:
             self.branches.append(self._model.x)
 
         [setattr(prep.preprocessing, "called", model_entry.prep[i]) for i, prep in enumerate(self.branches)]
-        [setattr(missing.missing_data, "called", model_entry.missing_data[i]) for i, missing in enumerate(self.branches)]
+
+        [setattr(prep.preprocessing, "scaling_attributes", model_entry.prep_attr[i])
+         for i, prep in enumerate(self.branches)]
+
+        [setattr(missing.missing_data, "called", model_entry.missing_data[i])
+         for i, missing in enumerate(self.branches)]
 
         self.log_object = model_entry
 

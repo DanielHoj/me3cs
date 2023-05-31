@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 import numpy as np
+import pandas as pd
 
 from me3cs.cross_validation.cross_validation import CrossValidationRegression
 from me3cs.framework.base_model import BaseModel
@@ -8,7 +9,9 @@ from me3cs.framework.outlier_detection import choose_optimal_component
 from me3cs.metrics.regression.diagnostics import DiagnosticsPLS
 from me3cs.metrics.regression.metrics import MetricsRegression
 from me3cs.metrics.regression.results import RegressionResults
+from me3cs.misc.handle_data import transform_array_1d_to_2d
 from me3cs.models.regression import MLR, PCR, PLS
+from me3cs.preprocessing.preprocessing import Preprocessing2D
 
 if TYPE_CHECKING:
     from me3cs.models.regression import TYPING_ALGORITHM_REGRESSION
@@ -69,6 +72,36 @@ class RegressionModel(BaseModel):
     def svm(self):
         # TODO: implement svm algorithm
         pass
+
+    def predict(self, new_data: [pd.DataFrame, np.ndarray]) -> np.ndarray:
+        if self.results.calibration is None:
+            raise ValueError("A model is needed to predict from")
+
+        if isinstance(new_data, pd.DataFrame):
+            new_data = new_data.values
+        if not isinstance(new_data, np.ndarray):
+            raise TypeError("Data should be a pandas DataFrame or numpy ndarray")
+
+        variable_index = self.x.data_class.variables.total
+
+        if new_data.flatten().shape == new_data.shape:
+            x = transform_array_1d_to_2d(new_data)
+            x = x[variable_index, :].T
+        else:
+            x = new_data[:, variable_index]
+
+        prep = Preprocessing2D(x, "predict")
+        prep.called = self.x.preprocessing.called
+        prep.scaling_attributes = self.x.preprocessing.scaling_attributes
+        prep.call_in_order()
+
+        reg = self.results.calibration.reg
+        opt_compoments = self.results.optimal_number_component - 1
+
+        prediction = prep.data @ transform_array_1d_to_2d(reg[:, opt_compoments]) \
+                     + self.y.preprocessing.scaling_attributes.mean
+
+        return prediction
 
     def __regresion_pileline__(self, algorithm: "TYPING_ALGORITHM_REGRESSION",
                                reg_results: "TYPING_RESULTS_REGRESSION") -> None:

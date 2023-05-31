@@ -10,6 +10,13 @@ def sort_function_order(func):
         self._sort_order()
     return inner
 
+class ScalingAttributes:
+    def __init__(self):
+        self.mean: [None, np.ndarray] = None
+        self.median: [None, np.ndarray] = None
+        self.std: [None, np.ndarray] = None
+        self.sqrt_std: [None, np.ndarray] = None
+
 
 class PreprocessingBaseClass:
     """
@@ -38,16 +45,22 @@ class PreprocessingBaseClass:
     call_in_order():
         Calls the preprocessing functions in the correct order.
     """
+    MODES = ("preprocess", "predict", "cross_validation")
 
-    def __init__(self, data: [Data, np.ndarray]):
+    def __init__(self, data: [Data, np.ndarray], mode: str = "preprocess"):
 
         if isinstance(data, np.ndarray):
             data = Data(data, Index(data.shape[0]), Index(data.shape[1]))
         self.data_class = data
 
+        if mode not in self.MODES:
+            raise ValueError(f"mode needs to be one of {' or '.join(self.MODES)}")
+        self.mode = mode
+
         self.called = Called(list(), list(), list())
         self.data_is_centered = False
         self._reference: [None, np.ndarray] = None
+        self.scaling_attributes = ScalingAttributes()
 
     @property
     def data(self):
