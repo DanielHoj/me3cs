@@ -67,8 +67,8 @@ class PreprocessingBaseClass:
         setattr(self, "data_is_centered", flag)
 
     def reset(self) -> None:
-
-        self.data_class.reset_index("outlier_detection")
+        new_data = self.data_class.outlier_detection.get()
+        self.data_class.preprocessing_data.set(new_data)
         self.update_is_centered(False)
         self.called.reset()
 
