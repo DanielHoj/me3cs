@@ -116,6 +116,12 @@ This removes the observation with the highest hotelling $T\^2$ value at the give
 Similarly can outliers be removed by and index with ``mdl.outlier_detection.remove_outliers(outlier_index=(1,2,3)``, this will remove observation 2,3 and 4.
 The outliers can be reset to its original state by using the function ``mdl.outlier_detection.reset()``.
 
+    
+### Variables too
+    
+We can similarly remove variables. This can be done either by using the ``mdl.variable_selection.remove_variables()``, ``mdl.variable_selection.range_keep()`` or ``mdl.variable_selection.range_cut()`` methods. 
+    
+    
 ### And now, let's try again...
 
 Maybe you decide to check whether preprocessing would achieve a better model. This can easily be done in the ``preprocessing`` module.
@@ -152,10 +158,12 @@ which results in the following table:
 
 | index | comment                     | date       | time     | cv type          | cv left out | opt comp          | x prep             | y prep        | obs removed | vars removed | rmsec    | rmsecv   | msec     | msecv      | biascv   |
 | ----- | --------------------------- | ----------| --------| ---------------- | -----------| -----------------| ------------------| -------------| -----------| ------------| -------- | -------- | -------- | ---------- | -------- |
-| 0     | None                        | 2023-05-01 | 17:21:47 | venetian blinds  | 0.1        | 3                | mean center       | mean center  | 0          | 0           | 2.584997 | 3.615796 | 6.682209 | 13.073982 | 0.382576 |
-| 1     | None                        | 2023-05-01 | 17:21:55 | venetian blinds  | 0.1        | 3                | mean center       | mean center  | 1          | 0           | 2.695116 | 3.423871 | 7.263652 | 11.722890 | 0.262751 |
-| 2     | None                        | 2023-05-01 | 17:22:05 | venetian blinds  | 0.1        | 3                | msc, mean center  | mean center  | 1          | 0           | 1.221995 | 1.775838 | 1.493271 | 3.153602  | 0.125461 |
-| 3     | I think, maybe 4 is better?? | 2023-05-01 | 17:22:29 | venetian blinds  | 0.1        | 4                | msc, mean center  | mean center  | 1          | 0           | 0.975773 | 1.657299 | 0.952132 | 2.746639  | 0.082478 |
+| 0     | None                        | 2023-05-31 | 11:03:35 | venetian blinds  | 0.1        | 3                | mean center       | mean center  | 0          | 0           | 2.584997 | 3.615796 | 6.682209 | 13.073982 | 0.382576 |
+| 1     | None                        | 2023-05-31 | 11:03:42 | venetian blinds  | 0.1        | 3                | mean center       | mean center  | 1          | 0           | 2.695116 | 3.423871 | 7.263652 | 11.722890 | 0.262751 |
+| 2     | None                        | 2023-05-31 | 11:03:54 | venetian blinds  | 0.1        | 3                | msc, mean center  | mean center  | 1          | 0           | 1.221995 | 1.775838 | 1.493271 | 3.153602  | 0.125461 |
+| 3     | I think, maybe 4 is better?? | 2023-05-31 | 11:05:20 | venetian blinds  | 0.1        | 4                | msc, mean center  | mean center  | 1          | 0           | 0.975773 | 1.657299 | 0.952132 | 2.746639  | 0.082478 |
+| 4     | None                        | 2023-05-31 | 11:26:55 | venetian blinds  | 0.1        | 3                | msc, mean center  | mean center  | 1          | 789         | 1.512316 | 2.316094 | 2.287098 | 5.364291  | 0.110688 |
+
 
 From here can different cross-validation types, preprocessing and outlier detection be used, allowing you to create a good model. If you at any point want to return to a specific model state, you can use the ``mdl.log.set_model_from_log(entry_number)`` where entry_number is the index of the model you want.
 
