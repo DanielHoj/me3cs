@@ -59,29 +59,33 @@ The data is NIR measurements of mixture samples with glucose, fructose and succr
 ### Let's get the data:
 
 The matlab data is loaded as numpy objects, with x as the nir spectra and y as the fructose reference values:
-
-    from scipy.io import loadmat
-    import numpy as np
-    data = loadmat(
-        "/dataset_2_glufrusuc.mat"
-    )
-    x = data["data"]
-    y = data["fructose_ref"]
-
+```python
+from scipy.io import loadmat
+import numpy as np
+   
+data = loadmat(
+    "./dataset_2_glufrusuc.mat"
+)
+x = data["data"]
+y = data["fructose_ref"]
+```
 The data can further be visualised, with your favourit plotting package.
 
 ### Making our first model:
  
 A *me3cs* model is created by:
-
-     import me3cs as m3
-     mdl = m3.Model(x,y)
-
+```python
+import me3cs as m3
+     
+mdl = m3.Model(x,y)
+```
 The NIR spectra is passed as the x parameter, and the fructose reference is the y variable.
 
 A PLS model can be created simply by calling the pls method:
 
-     mdl.pls()
+```python
+mdl.pls()
+```
      
 The cross-validation default settings are *venetian blinds*, but can be changed in ``mdl.options.cross_validation``. If the data has not been preprocessed by a *scaling* method, the data is mean centered prior to creating a PLS model.
 
@@ -93,7 +97,7 @@ After the PLS model is created, the results can be found in ``mdl.results``. For
 
 ``mdl.results.crossvalidation`` stores rmse, mse and bias.
 
-``mdl.results.diagnostics`` stores leverage, $Q-$ residuals and $hotelling\ T\^2$ values.
+``mdl.results.diagnostics`` stores leverage, $Q$ - residuals and hotelling $T\^2$ values.
 
 A best guess at the optimal number of components is made in ``mdl.results.optimal_number_component``, but can be changed to what you believe is the correct value. All results are numpys ``ndarray``, and can easily be plotted by a third party library.
 
@@ -101,12 +105,14 @@ A best guess at the optimal number of components is made in ``mdl.results.optima
 
 The ``outliers_detection`` module provides an easy way of removing variable or observational outliers.
 
-If you want to remove the observation with the highest $hotelling\ T\^2$ value from the diagnostics results, you can call the:
+If you want to remove the observation with the highest hotelling $T\^2$ value from the diagnostics results, you can call the:
 
 
-    mdl.outlier_detection.remove_outlier_from_hotellings_t2()
+```python
+mdl.outlier_detection.remove_outlier_from_hotellings_t2()
+```
     
-This removes the observation with the highest $hotelling\ T\^2$ value at the given optimal number of components, and calculates a new pls model. Similarly can observations be removed based on the leverage and $Q$-residuals. 
+This removes the observation with the highest hotelling $T\^2$ value at the given optimal number of components, and calculates a new pls model. Similarly can observations be removed based on the leverage and $Q$ - residuals. 
 Similarly can outliers be removed by and index with ``mdl.outlier_detection.remove_outliers(outlier_index=(1,2,3)``, this will remove observation 2,3 and 4.
 The outliers can be reset to its original state by using the function ``mdl.outlier_detection.reset()``.
 
@@ -115,27 +121,32 @@ The outliers can be reset to its original state by using the function ``mdl.outl
 Maybe you decide to check whether preprocessing would achieve a better model. This can easily be done in the ``preprocessing`` module.
 Let's try to use *multiplicative scatter correction* function:
 
-    mdl.x.preprocessing.msc()
+```python
+mdl.x.preprocessing.msc()
+```
     
 The data (we have still removed that one outlier) is now preprocessed by  *multiplicative scatter correction* and *mean centering*.
 If we at any time decide to remove the preprocessing, this can be done by calling the ``mdl.x.preprocessing.reset()``.
 
 Now let's make a new pls model:
-
-     mdl.pls()    
-
+```python
+mdl.pls()    
+```
+    
 ### Now we're logging
 
 In the logging module we can quickly access the data that has previously been calculated, and revert the model back to the desired model.
 
 So far we have been logging our results, everytime the ``mdl.pls`` has been called. It is also possible to make an entry in the log with the ``mdl.log.make_entry()`` method. If we for instance decide that the optimal number of components is 4, we can set it to that and make an entry with a comment:
-
-    mdl.log.make_entry("I think, maybe 4 is better??")
-
+```python
+mdl.log.make_entry("I think, maybe 4 is better??")
+```
+    
 At any time, if we want overview of the data, we can create a pandas dataframe:
-
-    df = mdl.log.get_summary()
-
+```python
+df = mdl.log.get_summary()
+```
+    
 which results in the following table:
 
 | index | comment                     | date       | time     | cv type          | cv left out | opt comp          | x prep             | y prep        | obs removed | vars removed | rmsec    | rmsecv   | msec     | msecv      | biascv   |
@@ -151,9 +162,9 @@ From here can different cross-validation types, preprocessing and outlier detect
 
 ## Installation <a name="installation"></a>
 The *me3cs* package can be installed with pypi:
-
-    pip install me3cs
-
+```bash
+pip install me3cs
+```
 ## License <a name="license"></a>
 [BSD 3](LICENSE.txt)
 
