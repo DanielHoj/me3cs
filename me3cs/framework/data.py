@@ -286,7 +286,7 @@ class Data:
             raise TypeError("'dimension' should be a string")
         dim_types = ["all", "rows", "variables"]
         if dimension not in dim_types:
-            raise TypeError(f"'dimension' should be one of {'or '.join(dim_types)}")
+            raise TypeError(f"'dimension' should be one of {' or '.join(dim_types)}")
 
         match dimension:
             case "all":
