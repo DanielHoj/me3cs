@@ -8,7 +8,6 @@ def sort_function_order(func):
     def inner(self, *args, **kwargs):
         func(self, *args, **kwargs)
         self._sort_order()
-
     return inner
 
 
