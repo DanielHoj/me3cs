@@ -69,7 +69,9 @@ data = loadmat(
 x = data["data"]
 y = data["fructose_ref"]
 ```
-The data can further be visualised, with your favourit plotting package.
+The data can further be visualised, with your favourit plotting package. The following plot illustrates the raw data, plotted with matplotlib:
+    
+<img src="https://github.com/DanielHoj/me3cs/blob/master/images/raw_data.png" width="850">
 
 ### Making our first model:
  
@@ -99,7 +101,9 @@ After the PLS model is created, the results can be found in ``mdl.results``. For
 
 ``mdl.results.diagnostics`` stores leverage, $Q$ - residuals and hotelling $T\^2$ values.
 
-A best guess at the optimal number of components is made in ``mdl.results.optimal_number_component``, but can be changed to what you believe is the correct value. All results are numpys ``ndarray``, and can easily be plotted by a third party library.
+A best guess at the optimal number of components is made in ``mdl.results.optimal_number_component``, but can be changed to what you believe is the correct value. All results are numpys ``ndarray``, and can easily be plotted by a third party library. The following is an example of the Root Mean Squared Error (RMSE) values of the cross-validated and calibrated data:
+
+<img src="https://github.com/DanielHoj/me3cs/blob/master/images/rmse.png" width="850">
 
 ### Outliers, Be gone:
 
@@ -121,6 +125,20 @@ The outliers can be reset to its original state by using the function ``mdl.outl
     
 We can similarly remove variables. This can be done either by using the ``mdl.variable_selection.remove_variables()``, ``mdl.variable_selection.range_keep()`` or ``mdl.variable_selection.range_cut()`` methods. 
     
+Let's say we want to keep only the variables visualised as the desired bounds:
+    
+<img src="https://github.com/DanielHoj/me3cs/blob/master/images/prep_data.png" width="850">
+    
+We can then use the ``range_keep()``method, and input the minimum and maximum desired bounds:
+
+```python
+mdl.variable_selection.range_keep(min_bound, max_bound)
+```
+This would result in ``mdl.x.data``, where only the variables within the boundaries are kept:
+    
+<img src="https://github.com/DanielHoj/me3cs/blob/master/images/prep_data_cut.png" width="850">
+
+The ``range_cut()`` method on the other hand removes the variables within the boundaries. Similarly to the outlier_detection, the variable_selection can be reset with the ``mdl.variable_selection.reset()``method. This will re-apply the preprocessing on the full data set.
     
 ### And now, let's try again...
 
@@ -131,7 +149,7 @@ Let's try to use *multiplicative scatter correction* function:
 mdl.x.preprocessing.msc()
 ```
     
-The data (we have still removed that one outlier) is now preprocessed by  *multiplicative scatter correction* and *mean centering*.
+The data (we have still removed that one outlier, and the 789 variables) is now preprocessed by  *multiplicative scatter correction* and *mean centering*.
 If we at any time decide to remove the preprocessing, this can be done by calling the ``mdl.x.preprocessing.reset()``.
 
 Now let's make a new pls model:
