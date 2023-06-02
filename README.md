@@ -113,10 +113,10 @@ If you want to remove the observation with the highest hotelling $T\^2$ value fr
 
 
 ```python
-mdl.outlier_detection.remove_outlier_from_hotellings_t2()
+mdl.outlier_detection.remove_outlier_from_hotellings_t2(n)
 ```
     
-This removes the observation with the highest hotelling $T\^2$ value at the given optimal number of components, and calculates a new pls model. Similarly can observations be removed based on the leverage and $Q$ - residuals. 
+This removes the n observations with the highest hotelling $T\^2$ value at the given optimal number of components, and calculates a new pls model. Similarly can observations be removed based on the leverage and $Q$ - residuals. 
 Outliers can also be removed by an index with ``mdl.outlier_detection.remove_outliers(outlier_index=(1,2,3)``, this will remove observation 2,3 and 4.
 The outliers can be reset to its original state by using the function ``mdl.outlier_detection.reset()``.
 
@@ -125,7 +125,7 @@ The outliers can be reset to its original state by using the function ``mdl.outl
     
 We can similarly remove variables. This can be done either by using the ``mdl.variable_selection.remove_variables()``, ``mdl.variable_selection.range_keep()`` or ``mdl.variable_selection.range_cut()`` methods. 
     
-Let's say we want to keep only the variables visualised as the desired bounds:
+Let's say we want to keep only the variables depicted within the desired bounds:
     
 <img src="https://github.com/DanielHoj/me3cs/blob/master/images/prep_data.png" width="850">
     
@@ -167,7 +167,7 @@ mdl.results.optimal_number_component = 4
 mdl.log.make_entry("I think, maybe 4 is better??")
 ```
     
-At any time, if we want overview of the data, we can create a pandas dataframe:
+At any time, if we want an overview of the data, we can create a pandas dataframe:
 ```python
 df = mdl.log.get_summary()
 ```
@@ -176,16 +176,24 @@ which results in the following table:
 
 | index | comment                     | date       | time     | cv type          | cv left out | opt comp          | x prep             | y prep        | obs removed | vars removed | rmsec    | rmsecv   | msec     | msecv      | biascv   |
 | ----- | --------------------------- | ----------| --------| ---------------- | -----------| -----------------| ------------------| -------------| -----------| ------------| -------- | -------- | -------- | ---------- | -------- |
-| 0     | None                        | 2023-05-31 | 11:03:35 | venetian blinds  | 0.1        | 3                | mean center       | mean center  | 0          | 0           | 2.584997 | 3.615796 | 6.682209 | 13.073982 | 0.382576 |
-| 1     | None                        | 2023-05-31 | 11:03:42 | venetian blinds  | 0.1        | 3                | mean center       | mean center  | 1          | 0           | 2.695116 | 3.423871 | 7.263652 | 11.722890 | 0.262751 |
-| 2     | None                        | 2023-05-31 | 11:03:54 | venetian blinds  | 0.1        | 3                | msc, mean center  | mean center  | 1          | 0           | 1.221995 | 1.775838 | 1.493271 | 3.153602  | 0.125461 |
-| 3     | I think, maybe 4 is better?? | 2023-05-31 | 11:05:20 | venetian blinds  | 0.1        | 4                | msc, mean center  | mean center  | 1          | 0           | 0.975773 | 1.657299 | 0.952132 | 2.746639  | 0.082478 |
-| 4     | None                        | 2023-05-31 | 11:26:55 | venetian blinds  | 0.1        | 3                | msc, mean center  | mean center  | 1          | 789         | 1.512316 | 2.316094 | 2.287098 | 5.364291  | 0.110688 |
+| 0     | None                        | 2023-05-31 | 11:57:01 | venetian blinds  | 0.1        | 3                | mean center       | mean center  | 0          | 0           | 2.584997 | 3.615796 | 6.682209 | 13.073982 | 0.382576 |
+| 1     | None                        | 2023-05-31 | 11:57:01 | venetian blinds  | 0.1        | 3                | mean center       | mean center  | 1          | 0           | 2.695116 | 3.423871 | 7.263652 | 11.722890 | 0.262751 |
+| 2     | None                        | 2023-05-31 | 11:57:05 | venetian blinds  | 0.1        | 3                | mean center       | mean center  | 1          | 789         | 2.351051 | 2.964790 | 5.527443 | 8.789981  | 0.211063 |
+| 3     | None                        | 2023-05-31 | 11:57:08 | venetian blinds  | 0.1        | 3                | msc, mean center  | mean center  | 1          | 789         | 1.512316 | 2.316094 | 2.287098 | 5.364291  | 0.110688 |
+| 4     | I think, maybe 4 is better?? | 2023-05-31 | 11:57:08 | venetian blinds  | 0.1        | 4                | msc, mean center  | mean center  | 1          | 789         | 1.313001 | 1.782723 | 1.723972 | 3.178100  | 0.071775 |
 
 
-From here can different cross-validation types, preprocessing and outlier detection be used, allowing you to create a good model. If you at any point want to return to a specific model state, you can use the ``mdl.log.set_model_from_log(entry_number)`` where entry_number is the index of the model you want.
+From here can different cross-validation types, preprocessing and outlier detection be tested, allowing you to create a good model. If you at any point want to return to a specific model state, you can use the ``mdl.log.set_model_from_log(entry_number)`` where entry_number is the index of the model you want.
 
-   
+### Aaand Lift Off
+    
+When a satisfactory model has been created it can be deployed into production. The ``predict()``method, makes it easy to predict new data, as it executes the complete pipeline of the model; the variables that has been removed will be removed on the new data, and preprocessing will be performed. The prediction will be performed based on the current model, so it is necessary to use the ``set_model_from_log()``method from the log, to select the desired model.
+With the correct model, predictions can now be made easily:
+```python
+mdl.predict(new_data)    
+```
+
+The model is now ready for deployment, and can be pickled and containerised. 
 
 ## Installation <a name="installation"></a>
 The *me3cs* package can be installed with pypi:
